@@ -1,0 +1,9 @@
+This program uses Dijkstra's Algorithm to find the distance between two characters from the player character in a given map. The program then prints the resulting distance map. I used the professors code from 1.02 and then made some changes to his algorithm and added some of my own methods, to print the map for example.
+
+Usage
+
+To use the program, simply run the poke327.c file using make and then ./poke327. 
+
+Known Issues:
+
+Currently, the program does not correctly find the shortest path between characters. This is due to a bug in the implementation of Dijkstra's Algorithm. It also does not print the distance map, I think this may also be due to a bad implementation of Dijkstras Algorithm. I tried everything I knew and went to office hours but just really struggled with this assignment, I guess I just didn't understand the idea of it maybe. Thank you for taking the time to grade this.

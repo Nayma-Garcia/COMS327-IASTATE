@@ -1,0 +1,3 @@
+This C program generates maps with terrain and trainers, allowing you to navigate the environment. Use ./test [numtrainers] to run, with an optional argument for the number of trainers (default is 10). 
+
+Warning, the numtrainers switch doesn't completley work, I did not have time to attend office hours this week due to having to pick up extra shifts at my 2 jobs and was struggling to make the switch update the number of trainers besides the sentries. I hope whoever is grading will be kind and not take too many points off since everything else works, my mental health would greatly appreciate it lol :). 

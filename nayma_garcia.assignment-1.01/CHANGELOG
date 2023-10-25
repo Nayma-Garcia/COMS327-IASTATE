@@ -1,0 +1,23 @@
+9/5
+	9:55pm : Started setting up enviornment and files
+	10:00pm : Started talking myself through what functions the project would need, along with what variables, structs, and algorithms
+	10:30pm : Started implementing struct, all global variables and function to get random number
+	11:00pm : Got the border working, at first it wasn't printing the right wall but I ended up just using some if statements to add space and it worked. 
+			  Now I'm starting on randomly generating the terrains within the borders, im gonna try to use some arrays to hold the different terrains and then randomly place those arrays on the map
+
+9/6
+	3:30pm : Started working on generating the terrain within the borders, maybe using some arrays or structs. I was having trouble getting the terrain to generate inside the border without moving it	
+			 I ended up just moving the border generating AFTER the terrain generation, so now the border generates over the terrain.
+
+9/7
+	7:30pm : I was having difficulty randomly generating the terrains. It would always just keep printing them outside of the borders
+	8:00pm : Decided to instead of a lot of different methods I condensed my border generator and the function that would fill the map with short grass into one, I used for loops for both
+			 I also used for loops to make the paths. I used a random x and a random y value to decide where the path begins and then from there it just continues the path into a straight line
+	8:30pm : Now im working on getting the poke centers to be next to the path and not in a random place
+	9:27PM : I figured out how to randomly place different squares of terrain around the map using for loops, so I'm currently working on doing that for all of the different terrains
+    10:30pm : I got the different terrains to place randomly on the map, and fullfilled the requirements for those, now im working on getting the pokemart and center to place next to the path but am having difficulties
+
+9/10 10:20pm : Figured out how to place the pokecenter on the map right next to the path by just incrimenting the path's y value by one so that the center is just always one y position away from the path
+			  I was having some trouble getting the M to place for some reason, even though its basically the same code as placing the C, I ended up having to use an if statement to check if it was within bounds and then placing it, for some reason it wouldn't place without that if statement
+	11:00pm	:  I believe I am finished with the project now. The M and C are now both next to the path, I also added some desert regions for fun, these are represented by "#"
+	

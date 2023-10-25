@@ -1,0 +1,7 @@
+
+This assignment is supposed to read user input using the ncurses library in C. It is supposed to allow the user to move around with an unbuffered IO so that we dont have to 
+recompile everytime to play the game, along with some other features listed in the assignment description PDF.
+
+I struggled a lot with understanding ncurses and how they work, so my code does not work the way it should. It does not read the user input as it should so that messes everything else up.
+
+Thank you for taking the time to grade this assignment.

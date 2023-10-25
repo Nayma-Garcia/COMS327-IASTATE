@@ -1,0 +1,13 @@
+9/18
+    11:00AM: Started working on the next assignment. Started by doing some research on how to implement dijkstras because i've never implemented it before.
+
+9/20
+	6:00pm: I started by implementing structs for the different trainers and such, had some issues getting them set up right 
+    8:00pm I finally got everything set up in a way that works for me, now i just have to calculate the distances
+
+9/26
+	7:30pm : Today I focused on calculating the distances, i had a lot of issues getting this to work, im not sure if it still completley works
+	9:00pm : Got it working i think, it prints out a map, im gonna continue tweaking it to see if I can get it to work better
+
+9/29
+    5:00pm: I think i did it correctly but am not sure, i just continued tweaking my distance calculations to see if I could make it better

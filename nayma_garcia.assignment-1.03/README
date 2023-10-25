@@ -1,0 +1,1 @@
+This program creates an 80x21 map with paths and a randomly generated terrain. It then also calculates the distance costs for different trainers and displays a distance map below the actual map generation. 

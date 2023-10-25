@@ -1,0 +1,12 @@
+9/10
+	3:00pm : Did not like how I set up my terrain generation in the last assignmnet, so I completley re did that so instead there is an array of the terrain with minumim and maximum region sizes which are randomly placed throughout. 
+
+9/11
+	6:00pm: I first started with setting up an array of 401x401 for all the maps. I had issues with getting a segmentation fault because of how large that array was. But after some research on how malloc works, i changed the way I was setting up the array to instead use a loop to malloc the space for it and free it after. 
+
+9/14
+	7:30pm : Today I focused on getting the maps to generate correctly with the commands. I originally had some issues withthe flying, i was just updating the position incorrectly
+	8:00pm : Once I got that working I then started working on getting the paths to align and some other stuff. I for some reason was able to get the the vertical paths to align but not the horizontal. I went to office hours and got help with this because I was also having the issue of being stuck in a while loop. 
+
+9/16 
+    5:00pm: I got everything working, today I just triple checked it was good.

@@ -1,0 +1,7 @@
+This project generates a new random 80x21 map every time the program is ran. 
+The program consists of trees, paths, boulders, PokeCenter and PokeMarts, water, long grass and short grass. 
+Which are placed randomly around the map. There are two paths, one that goes N-S and one that goes E-W, they connect at some point. 
+In this specific program there are 4 different functions to generate the different parts of the terrain, one of them just generating the border around the entire map. 
+Along with 2 more functions that print out the map and one that generates the map by putting all the other functions together.
+
+As seen in the Makefile, I used "test" to run my program just for ease of not having to type anything long

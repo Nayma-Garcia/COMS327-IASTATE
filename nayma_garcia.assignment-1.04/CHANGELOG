@@ -1,0 +1,10 @@
+10/05
+    11:00AM: Started working on the next assignment. Started by taking out the code to move between maps since that was not needed for this assignment to help keep it clean. I then made the map generate in a loop so that i could continue working on the actual assignment
+
+10/07
+	4:00pm: I started by implementing functions to update the hiker and rivals positions everytime the map was generated so that they moved to the PC
+    8:00pm I had some issues with the hiker and rival going through boulders and stuff so i added the necessary contraints
+
+10/08
+	1:30pm : I started today by adding functions for the rest of the trainers (pacers, wanderers, sentries and explorers), this went pretty smoothly since they did not have to pathfind. 
+	6:00pm : I then started working on implementing the numtrainers switch but was having immense difficulty since for some reason it would not update the number of trainers besides the sentries, i struggled on this for hours and was unable to properly fix it sadly.

@@ -1,0 +1,8 @@
+Trainers on Map
+
+This program utilizes the professors code from the previos homework and is designed to place different trainers on a map and simulate their movement according to their respective movement algorithms. However, s the trainers are not moving as expected, even though the code appears to be correct.(it probably isnt though)
+
+The PC stays still while the trainers are supposed to move around, although, due to my own fault in coding, they do not, and they end up printing in a strange manner, I believe this has to do with the way I have printed them
+
+To run this program type make and then ./poke327
+    

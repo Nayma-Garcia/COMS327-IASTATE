@@ -1,0 +1,7 @@
+This program generates a random terrain for the user to play on.
+It allows the user to input n s w e q or f
+    Although this functionality doesn't work as I want it to, it generates a new map but does not save it for when you go back
+This program also slowly makes the generation of Pokecenters and pokemarts less and less although sometimes it doesn't work and there is an equal amount of pokecenters and marts
+This assignment was very hard for me but I will work on strengthening my understanding of structs and pointers for the next assignment so that it works as it should
+This program also has a function that is supposed to save the current map into a new map variable for it to them be called when going back to a previusly visited map although I am not sure it works 100%
+Thank you for your hardwork and time that you have spent grading this.

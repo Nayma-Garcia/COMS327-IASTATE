@@ -1,0 +1,5 @@
+tour: nayma_garcia-assignment0.c
+	gcc -Wall nayma_garcia-assignment0.c -o tour
+
+clean:
+	rm -rf tour

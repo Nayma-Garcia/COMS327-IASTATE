@@ -1,0 +1,12 @@
+2/6 
+    Started working on getting the user input read, Its not working for some reason though, every time I input anything it quits the program
+2/7
+    I got the prgram to read the input now I'm just trying to set up the array of pointers to hold the worls, as I don't really understand pointers or malloc or anything like that
+    I created a struct to hold the maps and then made a variable called world from that struct, but I couldn't figure out how to change my program to store the worlds into that array, i kept getting segmentation faults
+    I also went to office hours but I kind of left more confused as I just dont understand pointers or structs all that well
+2/8
+    Doing some research over structs and pointers, trying to get the input to at least print a map
+    Continuing to have errors with getting segmentation faults even though I have initialized the pointers to null and have malloced the memory for them, I don't really know what to do now
+    I can not figure out the struct thing but I got it to print another map when the user presses n or any other letter and it quits when you press q
+    I implemented a function that saves the maps into a new map variable but I don't know how to get it to work properly
+    Something came up, so I no longer have time to work on this assignment and have to turn it in even though it is not completley done

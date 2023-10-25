@@ -1,0 +1,21 @@
+3/3/23
+    Started working on assignment 5
+        I started by reading the project description to try and understand what im supposed to be doing
+
+3/6/23
+    Started working on getting the Ncurses to work
+    Was having trouble figuring out how to run the lncurses library with the make file but after some research on the all mighty stack overflow i figured it out and it can run ncurses
+    Now gonna start working on the actual assignment specs
+
+3/10/23
+    Im starting with making some functionality to take in the user input for quitting the game and such
+    I am having a lot of trouble getting it to read user input
+
+3/12/23
+    Had to leave for spring break earlier than expected due to family reasons so will continue working on this after break
+
+3/22/23 
+    My flight got delayed so I was just now able to work on this
+    I am still struggling with reading the user input
+    I implemented a char that is supposed to hold the user input but it is not working correctly
+    I was unable to work on this assignment as much as I would have liked, it is not functioning as it should, it does not take the user input, BUT, its not broken so thats a plus, it is able to run ncurses

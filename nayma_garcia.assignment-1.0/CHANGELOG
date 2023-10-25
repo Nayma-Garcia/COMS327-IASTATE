@@ -1,0 +1,18 @@
+8/27
+    Set up my enviornment, had some issues getting pyrite to work but got those fixed pretty easy
+    Also downloaded the skeleton code and made a method to add the sobel filter but nothing in it yet
+
+8/28
+    Watched video provided in the assignment doc that explains how the kernels work
+    Also watched other youtube videos explaining how the algorithm for the edge detection worked
+    Took a lot of notes until I fully understood what to do
+    Also added the makefile
+
+8/30
+    Implemented the algorithm that adds the filter. Had some issues getting the right output. For a long time it was showing the edges kind of but the entire picture was grey and hard to see. 
+    Then somehow I made it show complete static but I fixed it.
+    Then it was showing the edges but they were extremley soft so I changed the ints to int_8 and that helped.
+    I also had some issues getting the input information from the images but I just casted the images I was taking in from the method signature to int_8's and that worked.
+
+8/31
+    Finished cleaning up the code a little and added the README

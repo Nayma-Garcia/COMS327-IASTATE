@@ -1,0 +1,15 @@
+2/27/23
+    Started by making a struct for each trainer, theres a struct for hiker, rival, swimmer etc..
+    I also started working on editing the professors dijkstras from the last homework so that it calculates the distamce from the trainer to the PC
+    I had some initial issues with that as i just didn't know where to start with changing it so it goes from the trainer to the PC
+    
+
+3/1/23
+    I had a few tests and work and a bunch of other stuff pile up so i havent had much work on this
+    I've decided to use the professors code for findint the distance from the hiker and the rival to the PC and just changing it so that it also finds the distance from the other trainers to the PC
+        Im scrapping the making structs for every type of trainer and instead adding them where the hiker and rival are, idk why I didn't do that to beging with, i make stuff harder than it should be
+    I think I have that part done, now im just gonna work on having the trainers moving.
+    I am really struggling with getting everything to move, i can get it to place on the map but theyre just theyre, they aren't moving at all
+    Theyre also placed in a really weird format
+        I definitley need to start immediatley on the next assignment and put stuff off to work on it
+        Thank you for your time in grading this.
