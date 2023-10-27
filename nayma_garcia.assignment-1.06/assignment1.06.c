@@ -189,6 +189,8 @@ void  clearMapAroundTrainerList();
 
 int numtrainers = 0;
 int mapGenerated[MAPSX][MAPSY] = {0};
+    int currentMapX = 200;
+    int currentMapY = 200;
 
 int main(int argc, char* argv[]) {
 
@@ -226,11 +228,7 @@ int main(int argc, char* argv[]) {
 
     srand(time(NULL));
 
-    int currentMapX = 200;
-    int currentMapY = 200;
-
     Map (*map)[MAPSY] = malloc(MAPSX * sizeof(Map[MAPSY]));
-
     // Check if memory allocation was successful
     if (map == NULL) {
         fprintf(stderr, "Memory allocation failed\n");
@@ -245,6 +243,7 @@ int main(int argc, char* argv[]) {
 
     while ((move = getch()) != 'q') {
          isTrainerThere();
+         mvprintw(22, 0, "PC location: ( %d, %d)", pc.position.x, pc.position.y);
         if(move == '7' || move == 'y'){
             updatePCLocation(&map[currentMapX][currentMapY], move);
             updateHikerLocation(&map[currentMapX][currentMapY]);
@@ -362,8 +361,8 @@ int main(int argc, char* argv[]) {
             fflush(stdout);
             usleep(500000);
             printMap(&map[currentMapX][currentMapY]);
-       }else if (move == 'p') {
-    // Move to the right map
+       }else if (pc.position.x >= WIDTH - 1) {
+    // Move to the right map   
             if (currentMapX + 1 < MAPSX) {
                 currentMapX++;
                 if (mapGenerated[currentMapX][currentMapY] == 0) {
@@ -371,10 +370,8 @@ int main(int argc, char* argv[]) {
                     mapGenerated[currentMapX][currentMapY] = 1; // Update the flag
                 }
                 printMap(&map[currentMapX][currentMapY]);
-            } else {
-                // Handle going out of bounds to the right
-            }
-} else if (move == 'o') {
+            } 
+} else if (pc.position.x <= 0) {
     // Move to the left map
     if (currentMapX - 1 >= 0) {
         currentMapX--;
@@ -383,9 +380,27 @@ int main(int argc, char* argv[]) {
             mapGenerated[currentMapX][currentMapY] = 1; // Update the flag
         }
         printMap(&map[currentMapX][currentMapY]);
-    } else {
-        // Handle going out of bounds to the left
-    }
+    } 
+}else if (pc.position.y >= LENGTH - 1) {
+    // Move to the right map   
+            if (currentMapY + 1 < MAPSY) {
+                currentMapY++;
+                if (mapGenerated[currentMapX][currentMapY] == 0) {
+                    generateMap(&map[currentMapX][currentMapY]);
+                    mapGenerated[currentMapX][currentMapY] = 1; // Update the flag
+                }
+                printMap(&map[currentMapX][currentMapY]);
+            } 
+} else if (pc.position.y <= 0) {
+    // Move to the left map
+    if (currentMapY - 1 >= 0) {
+        currentMapY--;
+        if (mapGenerated[currentMapX][currentMapY] == 0) {
+            generateMap(&map[currentMapX][currentMapY]);
+            mapGenerated[currentMapX][currentMapY] = 1; // Update the flag
+        }
+        printMap(&map[currentMapX][currentMapY]);
+    } 
 }
     }
     free(map);
@@ -529,6 +544,7 @@ void genPathCM(Map *map) {
     y = rand() % (LENGTH - 3) + 1;  // So it doesn't touch the top border
     for (x = 0; x < WIDTH; x++) {
         ewPath.symbol = '#';
+        ewPath.position.x = x;
         map->map[y][x] = ewPath.symbol;
     }
 
@@ -564,11 +580,10 @@ void genPathCM(Map *map) {
    
     for (y = 0; y < LENGTH; y++) {
         snPath.symbol = '#';
+        snPath.position.y = y;
         map->map[y][x] = snPath.symbol;
     }
 
-    snPath.position.y = y;
-    ewPath.position.x = x;
 }
 
 
@@ -909,14 +924,11 @@ void updatePCLocation(Map *map, int move){
         newY = pc.position.y;
        }
 
-   if (newX >= 0 && newX < WIDTH - 1 && newY >= 0 && newY < LENGTH - 1) {
         if(map->map[newY][newX] != '%' && map->map[newY][newX] != '^' && map->map[newY][newX] != '~' ){
             pc.position.x = newX;
             pc.position.y = newY;
-         }else{
-             mvprintw(0, 22, "You shall not pass there");
          }
-    }
+    
 
 }
 
