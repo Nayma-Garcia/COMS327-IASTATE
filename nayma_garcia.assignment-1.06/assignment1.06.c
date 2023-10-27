@@ -128,6 +128,22 @@ typedef struct {
 
 PokeMart pokeMart;
 
+typedef struct {
+    char symbol;
+    Coordinate position;
+    int direction; 
+} PathWE;
+
+PathWE ewPath;
+
+typedef struct {
+    char symbol;
+    Coordinate position;
+    int direction; 
+} PathSN;
+
+PathWE snPath;
+
 int hikerDirection = 0; 
 int rivalDirection = 0; 
 
@@ -512,7 +528,8 @@ void genPathCM(Map *map) {
     // Making the path that goes from east to west
     y = rand() % (LENGTH - 3) + 1;  // So it doesn't touch the top border
     for (x = 0; x < WIDTH; x++) {
-        map->map[y][x] = '#';
+        ewPath.symbol = '#';
+        map->map[y][x] = ewPath.symbol;
     }
 
     x = rand() % (WIDTH - 3) + 1;  
@@ -544,11 +561,15 @@ void genPathCM(Map *map) {
     map->map[pokeMart.position.y][pokeMart.position.x] = pokeMart.symbol;
 
     x = rand() % (WIDTH - 3); 
+   
     for (y = 0; y < LENGTH; y++) {
-        map->map[y][x] = '#';
+        snPath.symbol = '#';
+        map->map[y][x] = snPath.symbol;
     }
-}
 
+    snPath.position.y = y;
+    ewPath.position.x = x;
+}
 
 
 void generateTerrain(Map *map) {
