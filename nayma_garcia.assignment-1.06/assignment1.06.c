@@ -7,9 +7,8 @@
 #include <string.h>
 #include <ncurses.h>
 
-
-#define NUM_MAPSX 401
-#define NUM_MAPSY 401
+#define MAPSX 401
+#define MAPSY 401
 #define LENGTH 21
 #define WIDTH 80
 #define GRASS_PAIR 1
@@ -22,6 +21,10 @@
 #define PATH 8
 
 typedef struct {
+    char map[LENGTH][WIDTH];
+} Map;
+
+typedef struct {
     char terrainChar;
     int minRegions;
     int maxRegions;
@@ -32,16 +35,25 @@ typedef struct {
 } TerrainType;
 
 TerrainType terrainTypes[] = {
-    {':', 2, 10, 4, 13, 4, 9},  // tall grass
+    {':', 4, 10, 4, 13, 4, 9},  // tall grass
     {'^', 2, 6, 4, 13, 4, 9},   // trees
     {'~', 1, 5, 4, 13, 4, 9},   // water
     {'%', 1, 5, 4, 13, 4, 9},   // boulders
 };
 
-// Define a structure to represent a map
 typedef struct {
-    char map[LENGTH][WIDTH];
-} Map;
+    char characterChar;
+    int movementCost[11];
+} Trainer;
+
+Trainer trainerTypes[] = {
+    {'h', {INT_MAX, INT_MAX, 10, 10, 10, 2, 10, INT_MAX, INT_MAX, INT_MAX, 10}}, // hiker
+    {'r', {INT_MAX, INT_MAX, 10, 50, 50, 15, 10, 15, 15, INT_MAX, INT_MAX}},  // rival
+    {'s', {INT_MAX, INT_MAX, 10, 50, 50, 20, 10, INT_MAX, INT_MAX, INT_MAX, INT_MAX}} , //sentire
+    {'w', {INT_MAX, INT_MAX, 10, 50, 50, 20, 10, INT_MAX, INT_MAX, INT_MAX, INT_MAX}} , //wanderer
+    {'p', {INT_MAX, INT_MAX, 10, 50, 50, 20, 10, INT_MAX, INT_MAX, INT_MAX, INT_MAX}} , //pacer
+    {'e', {INT_MAX, INT_MAX, 10, 50, 50, 20, 10, INT_MAX, INT_MAX, INT_MAX, INT_MAX}}  // explorer
+};
 
 typedef struct {
     int x;
@@ -126,16 +138,14 @@ int hasWandererBeenBattled = 0;
 int hasSentrieBeenBattled = 0;
 int hasExplorerBeenBattled = 0;
 
-/*-----FUNCTION PROTOTYPES---------*/
 void generateMap(Map *map);
 void printMap(Map *map);
 void fillMapGrass(Map *map);
 void generateBorder(Map *map);
-void genPathCM(Map *map, char direction);
+void genPathCM(Map *map);
 void generateTerrain(Map *map);
 int getRandom(int min, int max);
 int isPathThere(char symbol, int x, int y, int width, int height, Map *map);
-int isCMOffMap(int x, int y, Map *map);
 void updateHikerLocation(Map *map);
 void updateRivalLocation(Map *map);
 void updatePacerLocation(Map *map);
@@ -159,8 +169,10 @@ void isSentrieThere();
 void isExplorerThere();
 void  clearMapAroundTrainerList();
 
-//global variables
-char currentDirection;
+
+
+int numtrainers = 0;
+int mapGenerated[MAPSX][MAPSY] = {0};
 
 int main(int argc, char* argv[]) {
 
@@ -180,130 +192,137 @@ int main(int argc, char* argv[]) {
     init_pair(POKEMART, COLOR_CYAN, COLOR_BLACK);
     init_pair(PATH, COLOR_YELLOW, COLOR_BLACK);
 
-    srand(time(NULL)); 
+
+    if (argc > 2) {
+        printf("Usage: %s [<numtrainers>]\n", argv[0]);
+        return 1;
+    }
+
+    if (argc == 2) {
+        numtrainers = atoi(argv[1]);
+        if (numtrainers < 0) {
+            printf("Number of trainers must be non-negative.\n");
+            return 1;
+        }
+    } else {
+        numtrainers = 0;
+    }
+
+    srand(time(NULL));
 
     int currentMapX = 200;
     int currentMapY = 200;
-    int pathGenerated[NUM_MAPSX][NUM_MAPSY] = {0};
 
-    Map** maps;
-    maps = (Map**)malloc(NUM_MAPSX * sizeof(Map*));
-    for (int x = 0; x < NUM_MAPSX; x++) {
-        maps[x] = (Map*)malloc(NUM_MAPSY * sizeof(Map));
+    Map (*map)[MAPSY] = malloc(MAPSX * sizeof(Map[MAPSY]));
+
+    // Check if memory allocation was successful
+    if (map == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        return 1; // Exit with an error code
     }
-
-    for (int x = 0; x < NUM_MAPSX; x++) {
-        for (int y = 0; y < NUM_MAPSY; y++) {
-            generateMap(&maps[x][y]);
-        }
-    }
-
-    generateMap(&maps[currentMapX][currentMapY]);
+   
+    generateMap(&map[currentMapX][currentMapY]);
     int move;
 
-     printMap(&maps[currentMapX][currentMapY]);
+     printMap(&map[currentMapX][currentMapY]);
      mvprintw(22, 0, "Please enter a command");
-    if(pathGenerated[currentMapX][currentMapY] == 0){
-        genPathCM(&maps[currentMapX][currentMapY], currentDirection);
-        pathGenerated[currentMapX][currentMapY] = 1;
-    }
 
     while ((move = getch()) != 'q') {
          isTrainerThere();
         if(move == '7' || move == 'y'){
-            updatePCLocation(&maps[currentMapX][currentMapY], move);
-            updateHikerLocation(&maps[currentMapX][currentMapY]);
-            updateRivalLocation(&maps[currentMapX][currentMapY]);
-            updatePacerLocation(&maps[currentMapX][currentMapY]);
-            updateWandererLocation(&maps[currentMapX][currentMapY]);
-            updateExplorerLocation(&maps[currentMapX][currentMapY]);
+            updatePCLocation(&map[currentMapX][currentMapY], move);
+            updateHikerLocation(&map[currentMapX][currentMapY]);
+            updateRivalLocation(&map[currentMapX][currentMapY]);
+            updatePacerLocation(&map[currentMapX][currentMapY]);
+            updateWandererLocation(&map[currentMapX][currentMapY]);
+            updateExplorerLocation(&map[currentMapX][currentMapY]);
             fflush(stdout);
             usleep(50000);
-            printMap(&maps[currentMapX][currentMapY]);
+            printMap(&map[currentMapX][currentMapY]);
         }else if(move == '8' || move == 'k'){
-        updatePCLocation(&maps[currentMapX][currentMapY], move);
-            updateHikerLocation(&maps[currentMapX][currentMapY]);
-            updateRivalLocation(&maps[currentMapX][currentMapY]);
-            updatePacerLocation(&maps[currentMapX][currentMapY]);
-            updateWandererLocation(&maps[currentMapX][currentMapY]);
-            updateExplorerLocation(&maps[currentMapX][currentMapY]);
+        updatePCLocation(&map[currentMapX][currentMapY], move);
+            updateHikerLocation(&map[currentMapX][currentMapY]);
+            updateRivalLocation(&map[currentMapX][currentMapY]);
+            updatePacerLocation(&map[currentMapX][currentMapY]);
+            updateWandererLocation(&map[currentMapX][currentMapY]);
+            updateExplorerLocation(&map[currentMapX][currentMapY]);
             fflush(stdout);
             usleep(50000);
-            printMap(&maps[currentMapX][currentMapY]);
+            printMap(&map[currentMapX][currentMapY]);
        }else if(move == '9' || move == 'u'){
-       updatePCLocation(&maps[currentMapX][currentMapY], move);
-            updateHikerLocation(&maps[currentMapX][currentMapY]);
-            updateRivalLocation(&maps[currentMapX][currentMapY]);
-            updatePacerLocation(&maps[currentMapX][currentMapY]);
-            updateWandererLocation(&maps[currentMapX][currentMapY]);
-            updateExplorerLocation(&maps[currentMapX][currentMapY]);
+       updatePCLocation(&map[currentMapX][currentMapY], move);
+            updateHikerLocation(&map[currentMapX][currentMapY]);
+            updateRivalLocation(&map[currentMapX][currentMapY]);
+            updatePacerLocation(&map[currentMapX][currentMapY]);
+            updateWandererLocation(&map[currentMapX][currentMapY]);
+            updateExplorerLocation(&map[currentMapX][currentMapY]);
             fflush(stdout);
             usleep(50000);
-            printMap(&maps[currentMapX][currentMapY]);
+            printMap(&map[currentMapX][currentMapY]);
        }else if(move =='6' || move == 'l'){
-        updatePCLocation(&maps[currentMapX][currentMapY], move);
-            updateHikerLocation(&maps[currentMapX][currentMapY]);
-            updateRivalLocation(&maps[currentMapX][currentMapY]);
-            updatePacerLocation(&maps[currentMapX][currentMapY]);
-            updateWandererLocation(&maps[currentMapX][currentMapY]);
-            updateExplorerLocation(&maps[currentMapX][currentMapY]);
+        updatePCLocation(&map[currentMapX][currentMapY], move);
+            updateHikerLocation(&map[currentMapX][currentMapY]);
+            updateRivalLocation(&map[currentMapX][currentMapY]);
+            updatePacerLocation(&map[currentMapX][currentMapY]);
+            updateWandererLocation(&map[currentMapX][currentMapY]);
+            updateExplorerLocation(&map[currentMapX][currentMapY]);
             fflush(stdout);
             usleep(50000);
-            printMap(&maps[currentMapX][currentMapY]);
+            printMap(&map[currentMapX][currentMapY]);
        }else if(move =='3' || move == 'n'){
-       updatePCLocation(&maps[currentMapX][currentMapY], move);
-            updateHikerLocation(&maps[currentMapX][currentMapY]);
-            updateRivalLocation(&maps[currentMapX][currentMapY]);
-            updatePacerLocation(&maps[currentMapX][currentMapY]);
-            updateWandererLocation(&maps[currentMapX][currentMapY]);
-            updateExplorerLocation(&maps[currentMapX][currentMapY]);
+       updatePCLocation(&map[currentMapX][currentMapY], move);
+            updateHikerLocation(&map[currentMapX][currentMapY]);
+            updateRivalLocation(&map[currentMapX][currentMapY]);
+            updatePacerLocation(&map[currentMapX][currentMapY]);
+            updateWandererLocation(&map[currentMapX][currentMapY]);
+            updateExplorerLocation(&map[currentMapX][currentMapY]);
             fflush(stdout);
             usleep(50000);
-            printMap(&maps[currentMapX][currentMapY]);
+            printMap(&map[currentMapX][currentMapY]);
        }else if(move =='2' || move == 'j'){
-        updatePCLocation(&maps[currentMapX][currentMapY], move);
-            updateHikerLocation(&maps[currentMapX][currentMapY]);
-            updateRivalLocation(&maps[currentMapX][currentMapY]);
-            updatePacerLocation(&maps[currentMapX][currentMapY]);
-            updateWandererLocation(&maps[currentMapX][currentMapY]);
-            updateExplorerLocation(&maps[currentMapX][currentMapY]);
+        updatePCLocation(&map[currentMapX][currentMapY], move);
+            updateHikerLocation(&map[currentMapX][currentMapY]);
+            updateRivalLocation(&map[currentMapX][currentMapY]);
+            updatePacerLocation(&map[currentMapX][currentMapY]);
+            updateWandererLocation(&map[currentMapX][currentMapY]);
+            updateExplorerLocation(&map[currentMapX][currentMapY]);
             fflush(stdout);
             usleep(50000);
-            printMap(&maps[currentMapX][currentMapY]);
+            printMap(&map[currentMapX][currentMapY]);
        }else if(move =='1' || move == 'b'){
-        updatePCLocation(&maps[currentMapX][currentMapY], move);
-            updateHikerLocation(&maps[currentMapX][currentMapY]);
-            updateRivalLocation(&maps[currentMapX][currentMapY]);
-            updatePacerLocation(&maps[currentMapX][currentMapY]);
-            updateWandererLocation(&maps[currentMapX][currentMapY]);
-            updateExplorerLocation(&maps[currentMapX][currentMapY]);
+        updatePCLocation(&map[currentMapX][currentMapY], move);
+            updateHikerLocation(&map[currentMapX][currentMapY]);
+            updateRivalLocation(&map[currentMapX][currentMapY]);
+            updatePacerLocation(&map[currentMapX][currentMapY]);
+            updateWandererLocation(&map[currentMapX][currentMapY]);
+            updateExplorerLocation(&map[currentMapX][currentMapY]);
             fflush(stdout);
             usleep(50000);
-            printMap(&maps[currentMapX][currentMapY]);
+            printMap(&map[currentMapX][currentMapY]);
        }else if(move =='4' || move == 'h'){
-            updatePCLocation(&maps[currentMapX][currentMapY], move);
-            updateHikerLocation(&maps[currentMapX][currentMapY]);
-            updateRivalLocation(&maps[currentMapX][currentMapY]);
-            updatePacerLocation(&maps[currentMapX][currentMapY]);
-            updateWandererLocation(&maps[currentMapX][currentMapY]);
-            updateExplorerLocation(&maps[currentMapX][currentMapY]);
+            updatePCLocation(&map[currentMapX][currentMapY], move);
+            updateHikerLocation(&map[currentMapX][currentMapY]);
+            updateRivalLocation(&map[currentMapX][currentMapY]);
+            updatePacerLocation(&map[currentMapX][currentMapY]);
+            updateWandererLocation(&map[currentMapX][currentMapY]);
+            updateExplorerLocation(&map[currentMapX][currentMapY]);
             fflush(stdout);
             usleep(50000);
-            printMap(&maps[currentMapX][currentMapY]);
+            printMap(&map[currentMapX][currentMapY]);
        }else if(move == '5' || move =='.' || move == ' '){
-            updatePCLocation(&maps[currentMapX][currentMapY], move);
-            updateHikerLocation(&maps[currentMapX][currentMapY]);
-            updateRivalLocation(&maps[currentMapX][currentMapY]);
-            updatePacerLocation(&maps[currentMapX][currentMapY]);
-            updateWandererLocation(&maps[currentMapX][currentMapY]);
-            updateExplorerLocation(&maps[currentMapX][currentMapY]);
+            updatePCLocation(&map[currentMapX][currentMapY], move);
+            updateHikerLocation(&map[currentMapX][currentMapY]);
+            updateRivalLocation(&map[currentMapX][currentMapY]);
+            updatePacerLocation(&map[currentMapX][currentMapY]);
+            updateWandererLocation(&map[currentMapX][currentMapY]);
+            updateExplorerLocation(&map[currentMapX][currentMapY]);
             fflush(stdout);
             usleep(50000);
-            printMap(&maps[currentMapX][currentMapY]);
+            printMap(&map[currentMapX][currentMapY]);
        }else if(move =='t'){
           fflush(stdout);
           usleep(50000);
-          printMap(&maps[currentMapX][currentMapY]);
+          printMap(&map[currentMapX][currentMapY]);
 
           clearMapAroundTrainerList();
           //hiker
@@ -318,103 +337,154 @@ int main(int argc, char* argv[]) {
           sentriePosFromPC(sentrie.position.x, sentrie.position.y,pc.position.x, pc.position.y);
           //explorer
           explorerPosFromPC(explorer.position.x, explorer.position.y,pc.position.x, pc.position.y);
-       }else if(move == '>' && isPConCorM(&maps[currentMapX][currentMapY]) == 1){
+       }else if(move == '>' && isPConCorM(&map[currentMapX][currentMapY]) == 1){
          mvprintw(22, 0, "Welcome to the PokeCenter!");
-       }else if (move == '>' && isPConCorM(&maps[currentMapX][currentMapY]) == 2){
+       }else if (move == '>' && isPConCorM(&map[currentMapX][currentMapY]) == 2){
         mvprintw(22, 0, "Welcome to the PokeMart!");
        }else if(move == '<' || move == 27){
-            updatePCLocation(&maps[currentMapX][currentMapY], move);
+            updatePCLocation(&map[currentMapX][currentMapY], move);
             fflush(stdout);
             usleep(500000);
-            printMap(&maps[currentMapX][currentMapY]);
-       }
-
-      
+            printMap(&map[currentMapX][currentMapY]);
+       }else if (move == 'p') {
+    // Move to the right map
+            if (currentMapX + 1 < MAPSX) {
+                currentMapX++;
+                if (mapGenerated[currentMapX][currentMapY] == 0) {
+                    generateMap(&map[currentMapX][currentMapY]);
+                    mapGenerated[currentMapX][currentMapY] = 1; // Update the flag
+                }
+                printMap(&map[currentMapX][currentMapY]);
+            } else {
+                // Handle going out of bounds to the right
+            }
+} else if (move == 'o') {
+    // Move to the left map
+    if (currentMapX - 1 >= 0) {
+        currentMapX--;
+        if (mapGenerated[currentMapX][currentMapY] == 0) {
+            generateMap(&map[currentMapX][currentMapY]);
+            mapGenerated[currentMapX][currentMapY] = 1; // Update the flag
+        }
+        printMap(&map[currentMapX][currentMapY]);
+    } else {
+        // Handle going out of bounds to the left
     }
- 
-    // while (1) {
-    //     printMap(&maps[currentMapX][currentMapY]);
-    //     printf("Current Map Coordinates: (%d, %d):\n", currentMapX, currentMapY);
-    //      fflush(stdout);
-        
-    //     printf("Enter 'n' to move north, 's' to move south, 'w' to move west, 'e' to move east, or 'q' to quit: ");
-    //     char input;
-    //     scanf(" %c", &input);
-        
-    //     if (input == 'n' && currentMapY > 0) {
-    //         currentMapY--;
-    //         currentDirection = 'n';
-    //          if(pathGenerated[currentMapX][currentMapY] == 0){
-    //             genPathCM(&maps[currentMapX][currentMapY], currentDirection);
-    //             pathGenerated[currentMapX][currentMapY] = 1;
-    //         }
-    //     } else if (input == 's' && currentMapY < NUM_MAPSY - 1) {
-    //         currentMapY++;
-    //         currentDirection = 's';
-    //        if(pathGenerated[currentMapX][currentMapY] == 0){
-    //             genPathCM(&maps[currentMapX][currentMapY], currentDirection);
-    //             pathGenerated[currentMapX][currentMapY] = 1;
-    //         }
-    //     } else if (input == 'w' && currentMapX > 0) {
-    //         currentMapX--;
-    //        currentDirection = 'w';
-    //       if(pathGenerated[currentMapX][currentMapY] == 0){
-    //             genPathCM(&maps[currentMapX][currentMapY], currentDirection);
-    //             pathGenerated[currentMapX][currentMapY] = 1;
-    //         }
-    //     } else if (input == 'e' && currentMapX < NUM_MAPSX - 1) {
-    //        currentMapX++;
-    //        currentDirection = 'e';
-    //        if(pathGenerated[currentMapX][currentMapY] == 0){
-    //             genPathCM(&maps[currentMapX][currentMapY], currentDirection);
-    //             pathGenerated[currentMapX][currentMapY] = 1;
-    //         }
-    //     } else if(input == 'f'){
-    //         int inputX;
-    //         int inputY;
-    //         printf("enter an x and y coordinate separated by a comma: ");
-    //         scanf("%d,%d", &inputX, &inputY);
-    //         if (inputX >= 0 && inputX < NUM_MAPSX && inputY >= 0 && inputY < NUM_MAPSY) {
-    //             currentMapX = inputX;
-    //             currentMapY = inputY;
-    //            if(pathGenerated[currentMapX][currentMapY] == 0){
-    //             genPathCM(&maps[currentMapX][currentMapY], currentDirection);
-    //             pathGenerated[currentMapX][currentMapY] = 1;
-    //         }
-    //         } else {
-    //             printf("Invalid coordinates. Try again.\n");
-    //         }
-    //     } else if (input == 'q') {
-    //         break;
-    //     } else {
-    //         printf("Invalid input. Try again.\n");
-    //     }
-    //     printf("current direction: %c\n", currentDirection);
-    // }
-    for (int x = 0; x < NUM_MAPSX; x++) {
-        free(maps[x]);
+}
     }
-    free(maps);
+    free(map);
+    endwin();
     return 0;
 }
 
 void generateMap(Map *map) {
     fillMapGrass(map);
     generateBorder(map);
-    // genPathCM(map, direction);
+    genPathCM(map);
     generateTerrain(map);
+    int numtrainers = 0;
+
+        pc.symbol = '@';
+    do {
+        pc.position.x = getRandom(1, WIDTH - 2);
+        pc.position.y = getRandom(1, LENGTH - 2);
+    } while (map->map[pc.position.y][pc.position.x] != '#');
+
+    for (int i = 0; i <= numtrainers; i++){
+        hiker.symbol = 'h';
+    do {
+        hiker.position.x = getRandom(1, WIDTH - 2);
+        hiker.position.y = getRandom(1, LENGTH - 2);
+    } while (map->map[hiker.position.y][hiker.position.x] == '#');
+
+    rival.symbol = 'r';
+    do {
+        rival.position.x = getRandom(1, WIDTH - 2);
+        rival.position.y = getRandom(1, LENGTH - 2);
+    } while (map->map[rival.position.y][rival.position.x] == '#' ||
+             (rival.position.x == hiker.position.x && rival.position.y == hiker.position.y) ||
+             (rival.position.x == pc.position.x && rival.position.y == pc.position.y));
+
+    pacer.symbol = 'p';
+    do {
+        pacer.position.x = getRandom(1, WIDTH - 2);
+        pacer.position.y = getRandom(1, LENGTH - 2);
+    } while (map->map[pacer.position.y][pacer.position.x] == '#' ||
+             (pacer.position.x == hiker.position.x && pacer.position.y == hiker.position.y) ||
+             (pacer.position.x == pc.position.x && pacer.position.y == pc.position.y) ||
+             (pacer.position.x == rival.position.x && pacer.position.y == rival.position.y));
+
+    pacer.direction = 0; 
+
+   wanderer.symbol = 'w';
+    do {
+        wanderer.position.x = getRandom(1, WIDTH - 2);
+        wanderer.position.y = getRandom(1, LENGTH - 2);
+    } while ((map->map[wanderer.position.y][wanderer.position.x] != ':') || 
+             (wanderer.position.x == hiker.position.x && wanderer.position.y == hiker.position.y) ||
+             (wanderer.position.x == pc.position.x && wanderer.position.y == pc.position.y) ||
+             (wanderer.position.x == rival.position.x && wanderer.position.y == rival.position.y) ||
+             (wanderer.position.x == pacer.position.x && wanderer.position.y == pacer.position.y));
+
+    wanderer.direction = getRandom(0, 3);
+
+ sentrie.symbol = 's'; 
+
+do {
+    sentrie.position.x = getRandom(1, WIDTH - 2);
+    sentrie.position.y = getRandom(1, LENGTH - 2);
+} while (map->map[sentrie.position.y][sentrie.position.x] != '.');
+map->map[sentrie.position.y][sentrie.position.x] = sentrie.symbol;
+
+explorer.symbol = 'e';
+do {
+    explorer.position.x = getRandom(1, WIDTH - 2);
+    explorer.position.y = getRandom(1, LENGTH - 2);
+} while ((map->map[explorer.position.y][explorer.position.x] != ':') || 
+         (explorer.position.x == hiker.position.x && explorer.position.y == hiker.position.y) ||
+         (explorer.position.x == pc.position.x && explorer.position.y == pc.position.y) ||
+         (explorer.position.x == rival.position.x && explorer.position.y == rival.position.y) ||
+         (explorer.position.x == pacer.position.x && explorer.position.y == pacer.position.y) ||
+         (explorer.position.x == wanderer.position.x && explorer.position.y == wanderer.position.y) ||
+         (explorer.position.x == sentrie.position.x && explorer.position.y == sentrie.position.y));
+
+explorer.direction = getRandom(0, 3);
+    }
+    
 }
+
 
 void printMap(Map *map) {
     int x;
     int y;
+    clear();
     for (y = 0; y < LENGTH; y++) {
         for (x = 0; x < WIDTH; x++) {
-            printf("%c", map->map[y][x]);
+            if (x == sentrie.position.x && y == sentrie.position.y) {
+                mvaddch(y, x, sentrie.symbol);
+            } else if (x == hiker.position.x && y == hiker.position.y) {
+                mvaddch(y,x, hiker.symbol);
+            } else if (x == pc.position.x && y == pc.position.y) {
+                attron(COLOR_PAIR(PLAYER_PAIR));
+                 mvaddch(y,x, pc.symbol);
+                attroff(COLOR_PAIR(PLAYER_PAIR));
+            } else if (x == rival.position.x && y == rival.position.y) {
+                 mvaddch(y,x, rival.symbol);
+            } else if (x == pacer.position.x && y == pacer.position.y) {
+                 mvaddch(y,x, pacer.symbol);
+            } else if (x == wanderer.position.x && y == wanderer.position.y) {
+                 mvaddch(y,x, wanderer.symbol);
+            } else if (x == explorer.position.x && y == explorer.position.y) {  
+                 mvaddch(y,x, explorer.symbol);
+            } else {
+                 mvaddch(y,x, map->map[y][x]);
+            }
         }
         printf("\n");
     }
+    refresh();
 }
+
 
 void fillMapGrass(Map *map) {
     int x, y;
@@ -428,7 +498,7 @@ void fillMapGrass(Map *map) {
 void generateBorder(Map *map) {
     int x, y;
     for (x = 0; x < WIDTH; x++) {
-        map->map[0][x] = '%'; //starting at the left corner
+        map->map[0][x] = '%'; 
         map->map[LENGTH - 1][x] = '%';
     }
     for (y = 0; y < LENGTH; y++) {
@@ -437,61 +507,48 @@ void generateBorder(Map *map) {
     }
 }
 
-int lastVerticalPathX = -1;
-int lastHorizontalPathY = -1;
-
-void genPathCM(Map *map, char direction) {
-    // Making the path that goes from east to west
-    char testdir = direction;
+void genPathCM(Map *map) {
     int x, y;
-    y = rand() % (LENGTH - 3) + 2;  // So it doesn't touch the top border
-
-if(testdir  == 'w' || testdir == 'e'){
-    if (lastHorizontalPathY != -1) {
-        y = lastHorizontalPathY;
-    }
-}
+    // Making the path that goes from east to west
+    y = rand() % (LENGTH - 3) + 1;  // So it doesn't touch the top border
     for (x = 0; x < WIDTH; x++) {
         map->map[y][x] = '#';
     }
 
-    lastHorizontalPathY = y;
-
-    // Place the C in a random place right next to the path
-    x = rand() % (WIDTH - 3);
-
-    if (y < 21 && y > 2 && x < 80 && x > 2) {
-        map->map[y + 1][x] = 'C';
+    x = rand() % (WIDTH - 3) + 1;  
+    if (y < LENGTH - 1 && x < WIDTH - 1) {
+        pokeCenter.symbol = 'C';
+        pokeCenter.position.x = x;
+        pokeCenter.position.y = y + 1;
     } else {
-        map->map[y - 1][x] = 'C';
+        pokeCenter.symbol = 'C';
+        pokeCenter.position.x = x;
+        pokeCenter.position.y = y - 1;
     }
 
-    // Place the M in a random place right next to the path
-    x = rand() % (WIDTH - 3);
-
-    if (x < 80 && x > 2 && y < 21 && y > 2) {
-        map->map[y + 1][x] = 'M';
+    if (y < LENGTH - 1 && x < WIDTH - 1) {
+        pokeMart.symbol = 'M';
+        pokeMart.position.x = x + 1;
+        pokeMart.position.y = y + 1;
     } else if (map->map[y][x] == '#') {
-        map->map[y][x + 1] = 'M';
+        pokeMart.symbol = 'M';
+        pokeMart.position.x = x + 1;
+        pokeMart.position.y = y;
     } else {
-        map->map[y - 1][x] = 'M';
+        pokeMart.symbol = 'M';
+        pokeMart.position.x = x - 1;
+        pokeMart.position.y = y - 1;
     }
 
-    x = rand() % (WIDTH - 3) + 2;
+    map->map[pokeCenter.position.y][pokeCenter.position.x] = pokeCenter.symbol;
+    map->map[pokeMart.position.y][pokeMart.position.x] = pokeMart.symbol;
 
-    // Use the last vertical path position from the previous map
-    if(direction == 'n' || direction == 's'){
-        if (lastVerticalPathX != -1) {
-            x = lastVerticalPathX;
-        }
-    }
+    x = rand() % (WIDTH - 3); 
     for (y = 0; y < LENGTH; y++) {
         map->map[y][x] = '#';
     }
-
-    // Update the last vertical path position
-    lastVerticalPathX = x;
 }
+
 
 
 void generateTerrain(Map *map) {
@@ -499,25 +556,20 @@ void generateTerrain(Map *map) {
 
     for (int i = 0; i < numTerrainTypes; i++) {
         TerrainType terrainType = terrainTypes[i];
-        int numRegions = getRandom(terrainType.minRegions, terrainType.maxRegions);
+        int x, y;
 
-        for (int j = 0; j < numRegions; j++) {
-            int regionWidth = getRandom(terrainType.minWidth, terrainType.maxWidth);
-            int regionHeight = getRandom(terrainType.minHeight, terrainType.maxHeight);
-            int x, y;
+        do {
+            x = getRandom(1, WIDTH - terrainType.maxWidth - 1);
+            y = getRandom(1, LENGTH - terrainType.maxHeight - 1);
+        } while (isPathThere('#', x, y, terrainType.maxWidth, terrainType.maxHeight, map));
 
-            do {
-                x = getRandom(1, WIDTH - regionWidth - 1);
-                y = getRandom(1, LENGTH - regionHeight - 1);
-            } while (isPathThere('#', x, y, regionWidth, regionHeight, map));
-
-            for (int ty = y; ty < y + regionHeight; ty++) {
-                for (int tx = x; tx < x + regionWidth; tx++) {
-                    map->map[ty][tx] = terrainType.terrainChar;
-                }
+        for (int ty = y; ty < y + terrainType.maxHeight; ty++) {
+            for (int tx = x; tx < x + terrainType.maxWidth; tx++) {
+                map->map[ty][tx] = terrainType.terrainChar;
             }
         }
     }
+    refresh();
 }
 
 int getRandom(int min, int max) {
@@ -837,8 +889,12 @@ void updatePCLocation(Map *map, int move){
        }
 
    if (newX >= 0 && newX < WIDTH - 1 && newY >= 0 && newY < LENGTH - 1) {
-        pc.position.x = newX;
-        pc.position.y = newY;
+        if(map->map[newY][newX] != '%' && map->map[newY][newX] != '^' && map->map[newY][newX] != '~' ){
+            pc.position.x = newX;
+            pc.position.y = newY;
+         }else{
+             mvprintw(0, 22, "You shall not pass there");
+         }
     }
 
 }
@@ -1231,3 +1287,4 @@ void clearMapAroundTrainerList() {
         }
     }
 }
+

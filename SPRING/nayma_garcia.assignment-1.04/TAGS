@@ -1,0 +1,247 @@
+
+heap.c,1020
+struct heap_node 8,99
+  heap_node_t *next;next9,118
+  heap_node_t *prev;prev10,139
+  heap_node_t *parent;parent11,160
+  heap_node_t *child;child12,183
+  void *datum;datum13,205
+  uint32_t degree;14,220
+  uint32_t mark;15,239
+#define swap(18,260
+#define splice_heap_node_lists(24,372
+#define insert_heap_node_in_list(33,684
+#define remove_heap_node_from_list(40,908
+void print_heap_node(45,1041
+void print_heap(61,1363
+void print_heap_node_list(78,1665
+void heap_init(94,1864
+void heap_node_delete(104,2100
+void heap_delete(122,2404
+heap_node_t *heap_insert(heap_insert133,2569
+void *heap_peek_min(heap_peek_min153,2895
+static void heap_link(158,2971
+static void heap_consolidate(172,3293
+void *heap_remove_min(heap_remove_min213,4226
+int heap_combine(248,4760
+static void heap_cut(277,5411
+static void heap_cascading_cut(291,5692
+int heap_decrease_key(305,5918
+int heap_decrease_key_no_replace(319,6160
+int32_t compare(343,6734
+char *print_int(print_int348,6833
+int main(357,6951
+
+heap.h,245
+# define HEAP_H2,15
+typedef struct heap_node heap_node_t;11,114
+typedef struct heap 13,153
+  heap_node_t *min;min14,175
+  uint32_t size;15,195
+  int32_t (*compare)compare16,212
+  void (*datum_delete)datum_delete17,269
+} heap_t;18,301
+
+poke327.c,6103
+# define randRange(11,161
+#define malloc(13,288
+typedef struct path 19,432
+  heap_node_t *hn;hn20,454
+  uint8_t pos[pos21,473
+  uint8_t from[from22,491
+  int32_t cost;23,510
+} path_t;24,526
+typedef enum dim 26,537
+  dim_x,27,556
+  dim_y,28,565
+  num_dims29,574
+} dim_t;30,585
+typedef int16_t pair_t[pair_t32,595
+#define MAP_X 34,630
+#define MAP_Y 35,660
+#define MIN_TREES 36,690
+#define MIN_BOULDERS 37,720
+#define TREE_PROB 38,750
+#define BOULDER_PROB 39,780
+#define WORLD_SIZE 40,810
+#define MOUNTAIN_SYMBOL 42,842
+#define BOULDER_SYMBOL 43,876
+#define TREE_SYMBOL 44,910
+#define FOREST_SYMBOL 45,944
+#define GATE_SYMBOL 46,978
+#define PATH_SYMBOL 47,1012
+#define POKEMART_SYMBOL 48,1046
+#define POKEMON_CENTER_SYMBOL 49,1080
+#define TALL_GRASS_SYMBOL 50,1114
+#define SHORT_GRASS_SYMBOL 51,1148
+#define WATER_SYMBOL 52,1182
+#define ERROR_SYMBOL 53,1216
+#define mappair(55,1251
+#define mapxy(56,1308
+#define heightpair(57,1343
+#define heightxy(58,1406
+typedef enum __attribute__ ((__packed__)) terrain_type 60,1448
+  ter_boulder,61,1505
+  ter_tree,62,1520
+  ter_path,63,1532
+  ter_mart,64,1544
+  ter_center,65,1556
+  ter_grass,66,1570
+  ter_clearing,67,1583
+  ter_mountain,68,1599
+  ter_forest,69,1615
+  ter_water,70,1629
+  ter_gate,71,1642
+  num_terrain_types,72,1654
+  ter_debug73,1675
+} terrain_type_t;74,1687
+typedef enum __attribute__ ((__packed__)) character_type 76,1706
+  char_pc,77,1765
+  char_hiker,78,1776
+  char_rival,79,1790
+  char_pacer,80,1804
+  char_wanderer,81,1818
+  char_sentries,82,1835
+  char_explorer,83,1852
+  char_swimmer,84,1869
+  char_other,85,1885
+  num_character_types86,1899
+} character_type_t;87,1921
+typedef struct pc 89,1942
+  pair_t pos;90,1962
+} pc_t;91,1976
+typedef struct trainer{trainer96,2291
+  heap_node_t *hn;hn97,2315
+  uint8_t pos[pos98,2334
+  uint8_t next_pos[next_pos99,2352
+  int lastPos[lastPos100,2375
+  character_type_t type;101,2393
+  uint8_t movementType;102,2418
+  int turn;103,2442
+}trainer_t;trainer_t106,2460
+typedef struct hiker{hiker108,2473
+  heap_node_t *hn;hn109,2495
+  uint8_t pos[pos110,2514
+  uint8_t next_pos[next_pos111,2532
+  int lastPos[lastPos112,2555
+  character_type_t type;113,2573
+  uint8_t movementType;114,2598
+  int turn;115,2622
+}hiker_t;hiker_t118,2640
+typedef struct rival{rival120,2651
+  heap_node_t *hn;hn121,2673
+  uint8_t pos[pos122,2692
+  uint8_t next_pos[next_pos123,2710
+  int lastPos[lastPos124,2733
+  character_type_t type;125,2751
+  uint8_t movementType;126,2776
+  int turn;127,2800
+}rival_t;rival_t130,2818
+typedef struct pacer{pacer132,2829
+  heap_node_t *hn;hn133,2851
+  uint8_t pos[pos134,2870
+  uint8_t next_pos[next_pos135,2888
+  int lastPos[lastPos136,2911
+  character_type_t type;137,2929
+  uint8_t movementType;138,2954
+  int turn;139,2978
+}pacer_t;pacer_t142,2996
+typedef struct wanderer{wanderer144,3007
+  heap_node_t *hn;hn145,3032
+  uint8_t pos[pos146,3051
+  uint8_t next_pos[next_pos147,3069
+  int lastPos[lastPos148,3092
+  character_type_t type;149,3110
+  uint8_t movementType;150,3135
+  int turn;151,3159
+}wanderer_t;wanderer_t154,3177
+typedef struct sentries{sentries156,3191
+  heap_node_t *hn;hn157,3216
+  uint8_t pos[pos158,3235
+  uint8_t next_pos[next_pos159,3253
+  int lastPos[lastPos160,3276
+  character_type_t type;161,3294
+  uint8_t movementType;162,3319
+  int turn;163,3343
+}sentries_t;sentries_t166,3361
+typedef struct explorer{explorer168,3375
+  heap_node_t *hn;hn169,3400
+  uint8_t pos[pos170,3419
+  uint8_t next_pos[next_pos171,3437
+  int lastPos[lastPos172,3460
+  character_type_t type;173,3478
+  uint8_t movementType;174,3503
+  int turn;175,3527
+}explorer_t;explorer_t178,3545
+typedef struct swimmer{swimmer180,3559
+  heap_node_t *hn;hn181,3583
+  uint8_t pos[pos182,3602
+  uint8_t next_pos[next_pos183,3620
+  int lastPos[lastPos184,3643
+  character_type_t type;185,3661
+  uint8_t movementType;186,3686
+  int turn;187,3710
+}swimmer_t;swimmer_t190,3728
+typedef struct map 195,3744
+  terrain_type_t map[map196,3765
+  uint8_t height[height197,3801
+  int8_t n,198,3833
+  int8_t n, s,198,3833
+  int8_t n, s, e,198,3833
+  int8_t n, s, e, w;198,3833
+} map_t;199,3854
+typedef struct queue_node 201,3864
+  int x,202,3892
+  int x, y;202,3892
+  struct queue_node *next;next203,3904
+} queue_node_t;204,3931
+typedef struct world 206,3948
+  terrain_type_t map[map207,3971
+  map_t *world[world208,4007
+  pair_t cur_idx;209,4047
+  map_t *cur_map;cur_map210,4065
+  int trainer[trainer214,4193
+  int hiker_dist[hiker_dist215,4222
+  int rival_dist[rival_dist216,4254
+  int pacer_dist[pacer_dist217,4286
+  int wanderer_dist[wanderer_dist218,4318
+  int sentries_dist[sentries_dist219,4353
+  int explorer_dist[explorer_dist220,4388
+  int swimmer_dist[swimmer_dist221,4423
+  pc_t pc;223,4460
+} world_t;225,4472
+world_t world;232,4642
+#define IM 235,4715
+int32_t move_cost[move_cost236,4734
+#undef IM243,5075
+static int32_t path_cmp(245,5086
+static int32_t edge_penalty(249,5209
+static void dijkstra_path(254,5335
+static int build_paths(352,9121
+static int gaussian[gaussian443,10793
+static int smooth_height(451,10956
+static void find_building_location(608,14991
+static int place_pokemart(639,16477
+static int place_center(653,16769
+static terrain_type_t border_type(668,17221
+static int map_terrain(712,18151
+static int place_boulders(895,22676
+static int place_trees(911,23000
+static int new_map(932,23523
+static void print_map(996,25423
+void init_world(1087,27636
+void delete_world(1093,27736
+#define ter_cost(1107,27966
+static int32_t hiker_cmp(1109,28020
+static int32_t rival_cmp(1116,28319
+static int32_t pacer_cmp(1123,28618
+static int32_t wanderer_cmp(1130,28917
+static int32_t sentries_cmp(1137,29225
+static int32_t explorer_cmp(1144,29533
+static int32_t swimmer_cmp(1151,29841
+void pathfind(1160,30148
+  void moveTrainer(1887,64885
+void generate_move(1911,65532
+void init_pc(2056,69660
+void usage(2070,69920
+int main(2115,70879
