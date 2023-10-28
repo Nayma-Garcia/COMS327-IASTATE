@@ -189,8 +189,8 @@ void  clearMapAroundTrainerList();
 
 int numtrainers = 0;
 int mapGenerated[MAPSX][MAPSY] = {0};
-    int currentMapX = 200;
-    int currentMapY = 200;
+    int currentMapX = 0;
+    int currentMapY = 0;
 
 int main(int argc, char* argv[]) {
 
@@ -210,22 +210,6 @@ int main(int argc, char* argv[]) {
     init_pair(POKEMART, COLOR_CYAN, COLOR_BLACK);
     init_pair(PATH, COLOR_YELLOW, COLOR_BLACK);
 
-
-    if (argc > 2) {
-        printf("Usage: %s [<numtrainers>]\n", argv[0]);
-        return 1;
-    }
-
-    if (argc == 2) {
-        numtrainers = atoi(argv[1]);
-        if (numtrainers < 0) {
-            printf("Number of trainers must be non-negative.\n");
-            return 1;
-        }
-    } else {
-        numtrainers = 0;
-    }
-
     srand(time(NULL));
 
     Map (*map)[MAPSY] = malloc(MAPSX * sizeof(Map[MAPSY]));
@@ -236,6 +220,7 @@ int main(int argc, char* argv[]) {
     }
    
     generateMap(&map[currentMapX][currentMapY]);
+    mapGenerated[currentMapX][currentMapY] = 1; 
     int move;
 
      printMap(&map[currentMapX][currentMapY]);
@@ -243,7 +228,7 @@ int main(int argc, char* argv[]) {
 
     while ((move = getch()) != 'q') {
          isTrainerThere();
-         mvprintw(22, 0, "PC location: ( %d, %d)", pc.position.x, pc.position.y);
+         mvprintw(23, 0, "PC location: (%d, %d)", pc.position.x, pc.position.y);
         if(move == '7' || move == 'y'){
             updatePCLocation(&map[currentMapX][currentMapY], move);
             updateHikerLocation(&map[currentMapX][currentMapY]);
@@ -1320,4 +1305,3 @@ void clearMapAroundTrainerList() {
         }
     }
 }
-
