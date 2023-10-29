@@ -184,6 +184,11 @@ void isWandererThere();
 void isSentrieThere();
 void isExplorerThere();
 void  clearMapAroundTrainerList();
+void setNewXforPC(int x);
+void setNewYforPC(int y);
+int getNewXforPC();
+int getNewYforPC();
+void createNewMap(Map *map);
 
 
 
@@ -191,6 +196,9 @@ int numtrainers = 0;
 int mapGenerated[MAPSX][MAPSY] = {0};
     int currentMapX = 0;
     int currentMapY = 0;
+
+int newXforPC;
+int newYforPC;
 
 int main(int argc, char* argv[]) {
 
@@ -226,9 +234,35 @@ int main(int argc, char* argv[]) {
      printMap(&map[currentMapX][currentMapY]);
      mvprintw(22, 0, "Please enter a command");
 
+
     while ((move = getch()) != 'q') {
          isTrainerThere();
          mvprintw(23, 0, "PC location: (%d, %d)", pc.position.x, pc.position.y);
+         mvprintw(24, 0, "Current Map: (%d, %d)", currentMapX, currentMapY);
+         mvprintw(25, 0, "N-S Path Y: %d", snPath.position.x);
+         mvprintw(26, 0, "E-W Path X: %d", ewPath.position.y);
+         mvprintw(27, 0, "newX & newY: (%d,%d)", getNewXforPC(), getNewYforPC());
+
+        //  if(currentMapX > 0){
+        //     generateMap(&map[currentMapX-1][currentMapY]);
+        //     mapGenerated[currentMapX - 1][currentMapY] = 1;
+        // }
+
+        //  if(currentMapX < MAPSX){
+        //     generateMap(&map[currentMapX+1][currentMapY]);
+        //     mapGenerated[currentMapX + 1][currentMapY] = 1;
+        // }
+
+        //  if(currentMapY > 0){
+        //     generateMap(&map[currentMapX][currentMapY - 1]);
+        //     mapGenerated[currentMapX][currentMapY-1] = 1;
+        // }
+
+        //  if(currentMapY < MAPSY){
+        //     generateMap(&map[currentMapX][currentMapY + 1]);
+        //     mapGenerated[currentMapX][currentMapY+1] = 1;
+        // }
+
         if(move == '7' || move == 'y'){
             updatePCLocation(&map[currentMapX][currentMapY], move);
             updateHikerLocation(&map[currentMapX][currentMapY]);
@@ -346,9 +380,8 @@ int main(int argc, char* argv[]) {
             fflush(stdout);
             usleep(500000);
             printMap(&map[currentMapX][currentMapY]);
-       }else if (pc.position.x >= WIDTH - 1) {
-    // Move to the right map   
-            if (currentMapX + 1 < MAPSX) {
+       }else if (pc.position.x == WIDTH - 1) {
+                if (currentMapX + 1 < MAPSX) {
                 currentMapX++;
                 if (mapGenerated[currentMapX][currentMapY] == 0) {
                     generateMap(&map[currentMapX][currentMapY]);
@@ -356,57 +389,113 @@ int main(int argc, char* argv[]) {
                 }
                 printMap(&map[currentMapX][currentMapY]);
             } 
-} else if (pc.position.x <= 0) {
-    // Move to the left map
-    if (currentMapX - 1 >= 0) {
-        currentMapX--;
-        if (mapGenerated[currentMapX][currentMapY] == 0) {
-            generateMap(&map[currentMapX][currentMapY]);
-            mapGenerated[currentMapX][currentMapY] = 1; // Update the flag
+    }else if (pc.position.x <= 0) {
+        // Move to the left map
+        if (currentMapX - 1 >= 0) {
+            currentMapX--;
+            if (mapGenerated[currentMapX][currentMapY] == 0) {
+                generateMap(&map[currentMapX][currentMapY]);
+                mapGenerated[currentMapX][currentMapY] = 1; // Update the flag
+            }
+            printMap(&map[currentMapX][currentMapY]);
+        } 
+    }else if (pc.position.y >= LENGTH - 1) {
+        // Move to the right map   
+                if (currentMapY + 1 < MAPSY) {
+                    currentMapY++;
+                    if (mapGenerated[currentMapX][currentMapY] == 0) {
+                        generateMap(&map[currentMapX][currentMapY]);
+                        mapGenerated[currentMapX][currentMapY] = 1; // Update the flag
+                    }
+                    printMap(&map[currentMapX][currentMapY]);
+                } 
+    } else if (pc.position.y <= 0) {
+        // Move to the left map
+        if (currentMapY - 1 >= 0) {
+            currentMapY--;
+            if (mapGenerated[currentMapX][currentMapY] == 0) {
+                generateMap(&map[currentMapX][currentMapY]);
+                mapGenerated[currentMapX][currentMapY] = 1; // Update the flag
+            }
+            printMap(&map[currentMapX][currentMapY]);
+        } 
+    }else if (move == 'f'){
+    int x, y;
+        mvprintw(28, 0, "Enter the X coordinate: ");
+        refresh();
+
+        char x_input[20];
+        int x_index = 0;
+        int ch;
+
+        while (1) {
+            ch = getch();
+            if (ch == '\n') {
+                break; // Exit the loop when Enter is pressed
+            } else if (ch >= '0' && ch <= '9' && x_index < 19) {
+                x_input[x_index++] = ch;
+                printw("%c", ch);
+            }
         }
-        printMap(&map[currentMapX][currentMapY]);
-    } 
-}else if (pc.position.y >= LENGTH - 1) {
-    // Move to the right map   
-            if (currentMapY + 1 < MAPSY) {
-                currentMapY++;
-                if (mapGenerated[currentMapX][currentMapY] == 0) {
-                    generateMap(&map[currentMapX][currentMapY]);
-                    mapGenerated[currentMapX][currentMapY] = 1; // Update the flag
-                }
-                printMap(&map[currentMapX][currentMapY]);
-            } 
-} else if (pc.position.y <= 0) {
-    // Move to the left map
-    if (currentMapY - 1 >= 0) {
-        currentMapY--;
-        if (mapGenerated[currentMapX][currentMapY] == 0) {
-            generateMap(&map[currentMapX][currentMapY]);
-            mapGenerated[currentMapX][currentMapY] = 1; // Update the flag
+        x_input[x_index] = '\0';
+
+        if (sscanf(x_input, "%d", &x) != 1) {
+            mvprintw(23, 0, "Invalid X coordinate. Please enter a valid integer.");
+            refresh();
+            break; // Exit the function if the input is invalid
         }
+
+    mvprintw(29, 0, "Enter the Y coordinate: ");
+        refresh();
+
+        char y_input[20];
+        int y_index = 0;
+
+        while (1) {
+            ch = getch();
+            if (ch == '\n') {
+                break; // Exit the loop when Enter is pressed
+            } else if (ch >= '0' && ch <= '9' && y_index < 19) {
+                y_input[y_index++] = ch;
+                printw("%c", ch);
+            }
+        }
+        y_input[y_index] = '\0';
+
+        // Convert the Y coordinate string to an integer
+        if (sscanf(y_input, "%d", &y) != 1) {
+            mvprintw(25, 0, "Invalid Y coordinate. Please enter a valid integer.");
+            refresh();
+            break; // Exit the function if the input is invalid
+        }
+
+        currentMapX = x;
+        currentMapY = y;
+
+    generateMap(&map[currentMapX][currentMapY]);
         printMap(&map[currentMapX][currentMapY]);
-    } 
-}
+
+        mvprintw(30, 0, "Moved to x=%d and y=%d", x, y);
+        refresh();
     }
-    free(map);
-    endwin();
-    return 0;
-}
+        }
+        free(map);
+        endwin();
+        return 0;
+    }
+
 
 void generateMap(Map *map) {
     fillMapGrass(map);
     generateBorder(map);
     genPathCM(map);
     generateTerrain(map);
-    int numtrainers = 0;
-
         pc.symbol = '@';
     do {
         pc.position.x = getRandom(1, WIDTH - 2);
         pc.position.y = getRandom(1, LENGTH - 2);
     } while (map->map[pc.position.y][pc.position.x] != '#');
 
-    for (int i = 0; i <= numtrainers; i++){
         hiker.symbol = 'h';
     do {
         hiker.position.x = getRandom(1, WIDTH - 2);
@@ -465,7 +554,6 @@ do {
          (explorer.position.x == sentrie.position.x && explorer.position.y == sentrie.position.y));
 
 explorer.direction = getRandom(0, 3);
-    }
     
 }
 
@@ -513,11 +601,11 @@ void fillMapGrass(Map *map) {
 
 void generateBorder(Map *map) {
     int x, y;
-    for (x = 0; x < WIDTH; x++) {
+    for (x = 0; x <= WIDTH; x++) {
         map->map[0][x] = '%'; 
         map->map[LENGTH - 1][x] = '%';
     }
-    for (y = 0; y < LENGTH; y++) {
+    for (y = 0; y <= LENGTH + 1; y++) {
         map->map[y][0] = '%';
         map->map[y][WIDTH - 1] = '%';
     }
@@ -529,7 +617,7 @@ void genPathCM(Map *map) {
     y = rand() % (LENGTH - 3) + 1;  // So it doesn't touch the top border
     for (x = 0; x < WIDTH; x++) {
         ewPath.symbol = '#';
-        ewPath.position.x = x;
+        ewPath.position.y = y;
         map->map[y][x] = ewPath.symbol;
     }
 
@@ -565,7 +653,7 @@ void genPathCM(Map *map) {
    
     for (y = 0; y < LENGTH; y++) {
         snPath.symbol = '#';
-        snPath.position.y = y;
+        snPath.position.x = x;
         map->map[y][x] = snPath.symbol;
     }
 
@@ -909,11 +997,13 @@ void updatePCLocation(Map *map, int move){
         newY = pc.position.y;
        }
 
+       setNewXforPC(newX);
+       setNewYforPC(newY);
+
         if(map->map[newY][newX] != '%' && map->map[newY][newX] != '^' && map->map[newY][newX] != '~' ){
             pc.position.x = newX;
             pc.position.y = newY;
          }
-    
 
 }
 
@@ -1304,4 +1394,26 @@ void clearMapAroundTrainerList() {
             mvprintw(y, x, " "); 
         }
     }
+}
+
+void createNewMap(Map *map){
+
+}
+
+
+//FOR TESTING
+void setNewXforPC(int x){
+    newXforPC =  x;
+}
+
+void setNewYforPC(int y){
+    newYforPC = y;
+}
+
+int getNewXforPC(){
+    return newXforPC;
+}
+
+int getNewYforPC(){
+    return newYforPC;
 }
