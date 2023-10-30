@@ -204,6 +204,8 @@ int numtrainers = 0;
     int currentMapX = 200;
     int currentMapY = 200;
 
+    int pathGenerated[MAPSX][MAPSY] = {0};
+
 int newXforPC;
 int newYforPC;
 
@@ -238,6 +240,7 @@ int main(int argc, char* argv[]) {
     int move;
     
     genPathCM(&map[currentMapX][currentMapY], 0, 0);
+    pathGenerated[currentMapX][currentMapY] = 1;
     placePCFly(&map[currentMapX][currentMapY]);
      printMap(&map[currentMapX][currentMapY]);
      mvprintw(22, 0, "Please enter a command");
@@ -245,11 +248,11 @@ int main(int argc, char* argv[]) {
 
     while ((move = getch()) != 'q') {
          isTrainerThere();
-         mvprintw(23, 0, "PC location: (%d, %d)", pc.position.x, pc.position.y);
-         mvprintw(24, 0, "Current Map: (%d, %d)", currentMapX, currentMapY);
-         mvprintw(25, 0, "N-S Path Y: %d", snPath.position.x);
-         mvprintw(26, 0, "E-W Path X: %d", ewPath.position.y);
-         mvprintw(27, 0, "newX & newY: (%d,%d)", getNewXforPC(), getNewYforPC());
+        //  mvprintw(23, 0, "PC location: (%d, %d)", pc.position.x, pc.position.y);
+         mvprintw(23, 0, "Current Map: (%d, %d)", currentMapX, currentMapY);
+        //  mvprintw(25, 0, "N-S Path Y: %d", snPath.position.x);
+        //  mvprintw(26, 0, "E-W Path X: %d", ewPath.position.y);
+        //  mvprintw(27, 0, "newX & newY: (%d,%d)", getNewXforPC(), getNewYforPC());
 
         if(move == '7' || move == 'y'){
             updatePCLocation(&map[currentMapX][currentMapY], move);
@@ -374,7 +377,10 @@ int main(int argc, char* argv[]) {
                 if (currentMapX + 1 < MAPSX) {
                     placePC(1, pc.position.y);
                     currentMapX++;
-                    genPathCM(&map[currentMapX][currentMapY], 0, ewPath.position.y); 
+                    if(pathGenerated[currentMapX][currentMapY] == 0){
+                        genPathCM(&map[currentMapX][currentMapY], 0, ewPath.position.y); 
+                        pathGenerated[currentMapX][currentMapY] = 1;
+                    }
                     printMap(&map[currentMapX][currentMapY]);
             } 
     }else if (pc.position.x <= 0) {
@@ -382,7 +388,10 @@ int main(int argc, char* argv[]) {
         if (currentMapX - 1 >= 0) {
            placePC(78, pc.position.y);
             currentMapX--;
-             genPathCM(&map[currentMapX][currentMapY], 0, ewPath.position.y); 
+                 if(pathGenerated[currentMapX][currentMapY] == 0){
+                        genPathCM(&map[currentMapX][currentMapY], 0, ewPath.position.y); 
+                        pathGenerated[currentMapX][currentMapY] = 1;
+                 }
             printMap(&map[currentMapX][currentMapY]);
         } 
     }else if (pc.position.y >= LENGTH - 1) {
@@ -390,7 +399,11 @@ int main(int argc, char* argv[]) {
                 if (currentMapY + 1 < MAPSY) {
                     placePC(pc.position.x, 1);
                     currentMapY++;
-                     genPathCM(&map[currentMapX][currentMapY], snPath.position.x, 0); 
+                if(pathGenerated[currentMapX][currentMapY] == 0){
+                        genPathCM(&map[currentMapX][currentMapY], snPath.position.x, 0); 
+                        pathGenerated[currentMapX][currentMapY] = 1;
+                 }
+                     
                     printMap(&map[currentMapX][currentMapY]);
                 } 
     } else if (pc.position.y <= 0) {
@@ -398,7 +411,10 @@ int main(int argc, char* argv[]) {
         if (currentMapY - 1 >= 0) {
             placePC(pc.position.x, 19);
             currentMapY--;
-            genPathCM(&map[currentMapX][currentMapY], snPath.position.x, 0); 
+            if(pathGenerated[currentMapX][currentMapY] == 0){
+                    genPathCM(&map[currentMapX][currentMapY], snPath.position.x, 0); 
+                    pathGenerated[currentMapX][currentMapY] = 1;
+            }
             printMap(&map[currentMapX][currentMapY]);
         } 
     }else if (move == 'f'){
@@ -524,10 +540,11 @@ void placePCFly(Map *map){
 }
 
 
+//WHAT TO DO NEXT : IDEAS
 
-//make new function to place pc at certain x or y based on where it ended, for example, if pc was at width in last map, place it at the same y buit 1 for the x in the new map (1 so it doesnt trigger moving to a diff map)
+//make new function to place pc at certain x or y based on where it ended, for example, if pc was at width in last map, place it at the same y but 1 for the x in the new map (1 so it doesnt trigger moving to a diff map)
 
-//fior path, pass in current path x and y, and place path in new map accordingly, if i pass in a 0 for the x or y, then that means to generate a new random value (this is for when moving along the x axis lets say, only the e-w needs to stay the same, so then i would pass in 0 for the n-s path to generate a new place for that)
+//for path, pass in current path x and y, and place path in new map accordingly, if i pass in a 0 for the x or y, then that means to generate a new random value (this is for when moving along the x axis lets say, only the e-w needs to stay the same, so then i would pass in 0 for the n-s path to generate a new place for that)
 
 
 void printMap(Map *map) {

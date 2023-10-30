@@ -1,0 +1,25 @@
+ ## WHAT THE PROGRAM DOES
+ 
+ This program allows the user to control the player character (PC) around the map still ,but now you ccan travel to other maps and it will place the PC in the next map where it would should be based on the assignment spec. You can also fly to any map within the 401x401 array. To do this follow these instructions:
+
+## FLYING INSTRUCTIONS
+ 1. enter an x when prompted
+    1a. press enter 
+2. enter a y when prompted
+    2a. press enter when prompted
+
+This is still utilizing ncurses, but i just thought it would be best to buffer the input a little.
+ 
+ This program is also now in C++ as well. All of the major structs have been turned into classes and the makefile as well as filetype have all also been updated, per instruction
+
+
+
+ ## WHEN RUNNING
+
+ There is a small delay when you first start the program since it is generating ALL the maps in the 401x401 world. But if you just give it a few seconds it will 100% appear
+
+ ## ALSO
+Once the map appears, please wait about 5 seconds before entering any input (its still trying to catch up a little). After you wait those 5 seconds though everything should work fine
+
+
+I recognize that having you wait a little for things to appear and work isn't ideal but the assignment specs never said the program had to be efficiant, it just had to work. I plan on working on a fix for these delays but for the meantime please be mindful of the small delays, thanks! 

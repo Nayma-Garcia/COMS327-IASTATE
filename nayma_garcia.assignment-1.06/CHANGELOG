@@ -1,2 +1,14 @@
 10/24
-    5:00PM: Started setting stuff up, made the folder and files.
+    5:00PM: Started setting stuff up, made the folder and files. Not much else though, I had a lot of other assignments
+
+10/28
+	4:00pm: I started working on moving my 401x401 world of maps code from 1.02 working in this assignment, i had a lot of issues with getting maps generated, turns out I just wasnt allocating memory for them correctly
+    6:00pm I then started working on little issues like the maps not saving and stuff like that
+
+10/29
+	1:30pm : Started the bulk of the assignment (had a busy week). I started by having it switch to the next map when the player was at that gate
+    3:20pm: I finally got the switching maps working (there was a lot fo issues with it just not printing the new map and stuff) now im working on the fly command
+    3:45pm: I got the fly command working pretty fast. Now im working on getting the pc to place in the correct place in the next map as well as getting the paths to allign
+    5:00pm: I got everything related to the PC done and working, later im gonna work on porting to C++
+    11:00pm: Im starting by  just updating my makefile and game file to go from c to cpp and gcc to g++, I ran into only 1 issue regarding allocating memory but that was an easy fix
+    11:10pm: I changed all the structs to be classes, this was pretty easy since all i had to do was change it froma typoedef struct to say "class" and then make an instance of that class so that my code can continue to use it. All done
