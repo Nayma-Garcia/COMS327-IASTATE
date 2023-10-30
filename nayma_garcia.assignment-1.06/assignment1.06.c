@@ -188,7 +188,8 @@ void setNewXforPC(int x);
 void setNewYforPC(int y);
 int getNewXforPC();
 int getNewYforPC();
-void placePC();
+void placePC(int pcX, int pcY);
+void placePCFly();
 
 
 
@@ -228,7 +229,8 @@ int main(int argc, char* argv[]) {
    
     //generateMap(&map[currentMapX][currentMapY]);
     int move;
-
+    
+    genPathCM(&map[currentMapX][currentMapY]);
      printMap(&map[currentMapX][currentMapY]);
      mvprintw(22, 0, "Please enter a command");
 
@@ -362,28 +364,28 @@ int main(int argc, char* argv[]) {
 
        }else if (pc.position.x == WIDTH - 1) {
                 if (currentMapX + 1 < MAPSX) {
-                placePC();
+                placePC(1, pc.position.y);
                 currentMapX++;
                 printMap(&map[currentMapX][currentMapY]);
             } 
     }else if (pc.position.x <= 0) {
         // Move to the left map
         if (currentMapX - 1 >= 0) {
-            placePC();
+           placePC(78, pc.position.y);
             currentMapX--;
             printMap(&map[currentMapX][currentMapY]);
         } 
     }else if (pc.position.y >= LENGTH - 1) {
         // Move to the right map   
                 if (currentMapY + 1 < MAPSY) {
-                    placePC();
+                    placePC(pc.position.x, 1);
                     currentMapY++;
                     printMap(&map[currentMapX][currentMapY]);
                 } 
     } else if (pc.position.y <= 0) {
         // Move to the left map
         if (currentMapY - 1 >= 0) {
-            placePC();
+            placePC(pc.position.x, 19);
             currentMapY--;
             printMap(&map[currentMapX][currentMapY]);
         } 
@@ -455,7 +457,7 @@ int main(int argc, char* argv[]) {
 void generateMap(Map *map) {
     fillMapGrass(map);
     generateBorder(map);
-    genPathCM(map);
+    //genPathCM(map);
     generateTerrain(map);
 
         pc.symbol = '@';
@@ -499,11 +501,22 @@ explorer.direction = getRandom(0, 3);
     
 }
 
-void placePC(){
-         pc.symbol = '@';
+void placePC(int pcX, int pcY){
+        pc.position.x = pcX;
+        pc.position.y = pcY;
+}
+
+void placePCFly(){
+        pc.symbol = '@';
         pc.position.x = getRandom(1, WIDTH - 5);
         pc.position.y = getRandom(1, LENGTH - 5);
 }
+
+
+
+//make new function to place pc at certain x or y based on where it ended, for example, if pc was at width in last map, place it at the same y buit 1 for the x in the new map (1 so it doesnt trigger moving to a diff map)
+
+//fior path, pass in current path x and y, and place path in new map accordingly, if i pass in a 0 for the x or y, then that means to generate a new random value (this is for when moving along the x axis lets say, only the e-w needs to stay the same, so then i would pass in 0 for the n-s path to generate a new place for that)
 
 
 void printMap(Map *map) {
