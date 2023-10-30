@@ -158,7 +158,7 @@ void generateMap(Map *map);
 void printMap(Map *map);
 void fillMapGrass(Map *map);
 void generateBorder(Map *map);
-void genPathCM(Map *map);
+void genPathCM(Map *map, int nsX, int ewY);
 void generateTerrain(Map *map);
 int getRandom(int min, int max);
 int isPathThere(char symbol, int x, int y, int width, int height, Map *map);
@@ -189,7 +189,7 @@ void setNewYforPC(int y);
 int getNewXforPC();
 int getNewYforPC();
 void placePC(int pcX, int pcY);
-void placePCFly();
+void placePCFly(Map *map);
 
 
 
@@ -230,7 +230,8 @@ int main(int argc, char* argv[]) {
     //generateMap(&map[currentMapX][currentMapY]);
     int move;
     
-    genPathCM(&map[currentMapX][currentMapY]);
+    genPathCM(&map[currentMapX][currentMapY], 0, 0);
+    placePCFly(&map[currentMapX][currentMapY]);
      printMap(&map[currentMapX][currentMapY]);
      mvprintw(22, 0, "Please enter a command");
 
@@ -364,15 +365,17 @@ int main(int argc, char* argv[]) {
 
        }else if (pc.position.x == WIDTH - 1) {
                 if (currentMapX + 1 < MAPSX) {
-                placePC(1, pc.position.y);
-                currentMapX++;
-                printMap(&map[currentMapX][currentMapY]);
+                    placePC(1, pc.position.y);
+                    currentMapX++;
+                    genPathCM(&map[currentMapX][currentMapY], 0, ewPath.position.y); 
+                    printMap(&map[currentMapX][currentMapY]);
             } 
     }else if (pc.position.x <= 0) {
         // Move to the left map
         if (currentMapX - 1 >= 0) {
            placePC(78, pc.position.y);
             currentMapX--;
+             genPathCM(&map[currentMapX][currentMapY], 0, ewPath.position.y); 
             printMap(&map[currentMapX][currentMapY]);
         } 
     }else if (pc.position.y >= LENGTH - 1) {
@@ -380,6 +383,7 @@ int main(int argc, char* argv[]) {
                 if (currentMapY + 1 < MAPSY) {
                     placePC(pc.position.x, 1);
                     currentMapY++;
+                     genPathCM(&map[currentMapX][currentMapY], snPath.position.x, 0); 
                     printMap(&map[currentMapX][currentMapY]);
                 } 
     } else if (pc.position.y <= 0) {
@@ -387,6 +391,7 @@ int main(int argc, char* argv[]) {
         if (currentMapY - 1 >= 0) {
             placePC(pc.position.x, 19);
             currentMapY--;
+            genPathCM(&map[currentMapX][currentMapY], snPath.position.x, 0); 
             printMap(&map[currentMapX][currentMapY]);
         } 
     }else if (move == 'f'){
@@ -442,6 +447,8 @@ int main(int argc, char* argv[]) {
         currentMapX = x;
         currentMapY = y;
 
+        genPathCM(&map[currentMapX][currentMapY], 0, 0); 
+        placePCFly(&map[currentMapX][currentMapY]);
         printMap(&map[currentMapX][currentMapY]);
 
         mvprintw(30, 0, "Moved to x=%d and y=%d", x, y);
@@ -459,11 +466,6 @@ void generateMap(Map *map) {
     generateBorder(map);
     //genPathCM(map);
     generateTerrain(map);
-
-        pc.symbol = '@';
-        pc.position.x = getRandom(1, WIDTH - 2);
-        pc.position.y = getRandom(1, LENGTH - 2);
-    
 
         hiker.symbol = 'h';
         hiker.position.x = getRandom(1, WIDTH - 2);
@@ -506,10 +508,12 @@ void placePC(int pcX, int pcY){
         pc.position.y = pcY;
 }
 
-void placePCFly(){
-        pc.symbol = '@';
-        pc.position.x = getRandom(1, WIDTH - 5);
-        pc.position.y = getRandom(1, LENGTH - 5);
+void placePCFly(Map *map){
+    pc.symbol = '@';
+      do {
+        pc.position.x = getRandom(1, WIDTH - 2);
+        pc.position.y = getRandom(1, LENGTH - 2);
+    } while (map->map[pc.position.y][pc.position.x] != '#');
 }
 
 
@@ -572,10 +576,14 @@ void generateBorder(Map *map) {
     }
 }
 
-void genPathCM(Map *map) {
+void genPathCM(Map *map, int nsX, int ewY) {
     int x, y;
     // Making the path that goes from east to west
-    y = rand() % (LENGTH - 3) + 1;  // So it doesn't touch the top border
+    if(ewY == 0){
+        y = rand() % (LENGTH - 3) + 1;  // So it doesn't touch the top border
+    }else{
+        y = ewY;
+    }
     for (x = 0; x < WIDTH; x++) {
         ewPath.symbol = '#';
         ewPath.position.y = y;
@@ -610,7 +618,12 @@ void genPathCM(Map *map) {
     map->map[pokeCenter.position.y][pokeCenter.position.x] = pokeCenter.symbol;
     map->map[pokeMart.position.y][pokeMart.position.x] = pokeMart.symbol;
 
-    x = rand() % (WIDTH - 3); 
+    if(nsX == 0){
+         x = rand() % (WIDTH - 3); 
+    }else{
+        x = nsX;
+    }
+  
    
     for (y = 0; y < LENGTH; y++) {
         snPath.symbol = '#';
