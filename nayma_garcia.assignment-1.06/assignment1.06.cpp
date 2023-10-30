@@ -20,11 +20,13 @@
 #define POKEMART 7
 #define PATH 8
 
-typedef struct {
+class Map {
+public:
     char map[LENGTH][WIDTH];
-} Map;
+};
 
-typedef struct {
+class TerrainType {
+public:
     char terrainChar;
     int minRegions;
     int maxRegions;
@@ -32,7 +34,7 @@ typedef struct {
     int maxWidth;
     int minHeight;
     int maxHeight;
-} TerrainType;
+};
 
 TerrainType terrainTypes[] = {
     {':', 4, 10, 4, 13, 4, 9},  // tall grass
@@ -41,108 +43,113 @@ TerrainType terrainTypes[] = {
     {'%', 1, 5, 4, 13, 4, 9},   // boulders
 };
 
-typedef struct {
+class Trainer {
+public:
     char characterChar;
     int movementCost[11];
-} Trainer;
+};
 
 Trainer trainerTypes[] = {
     {'h', {INT_MAX, INT_MAX, 10, 10, 10, 2, 10, INT_MAX, INT_MAX, INT_MAX, 10}}, // hiker
     {'r', {INT_MAX, INT_MAX, 10, 50, 50, 15, 10, 15, 15, INT_MAX, INT_MAX}},  // rival
-    {'s', {INT_MAX, INT_MAX, 10, 50, 50, 20, 10, INT_MAX, INT_MAX, INT_MAX, INT_MAX}} , //sentire
-    {'w', {INT_MAX, INT_MAX, 10, 50, 50, 20, 10, INT_MAX, INT_MAX, INT_MAX, INT_MAX}} , //wanderer
-    {'p', {INT_MAX, INT_MAX, 10, 50, 50, 20, 10, INT_MAX, INT_MAX, INT_MAX, INT_MAX}} , //pacer
+    {'s', {INT_MAX, INT_MAX, 10, 50, 50, 20, 10, INT_MAX, INT_MAX, INT_MAX, INT_MAX}} , // sentire
+    {'w', {INT_MAX, INT_MAX, 10, 50, 50, 20, 10, INT_MAX, INT_MAX, INT_MAX, INT_MAX}} , // wanderer
+    {'p', {INT_MAX, INT_MAX, 10, 50, 50, 20, 10, INT_MAX, INT_MAX, INT_MAX, INT_MAX}} , // pacer
     {'e', {INT_MAX, INT_MAX, 10, 50, 50, 20, 10, INT_MAX, INT_MAX, INT_MAX, INT_MAX}}  // explorer
 };
 
-typedef struct {
+
+class Coordinate {
+public:
     int x;
     int y;
-} Coordinate;
+};
 
-typedef struct {
+class Hiker {
+public:
     char symbol;
     Coordinate position;
-} Hiker;
+};
 
+class PC {
+public:
+    char symbol;
+    Coordinate position;
+};
+
+class Rival {
+public:
+    char symbol;
+    Coordinate position;
+};
+
+class Pacer {
+public:
+    char symbol;
+    Coordinate position;
+    int direction;
+};
+
+class Wanderer {
+public:
+    char symbol;
+    Coordinate position;
+    int direction;
+};
+
+class Sentrie {
+public:
+    char symbol;
+    Coordinate position;
+};
+
+class Explorer {
+public:
+    char symbol;
+    Coordinate position;
+    int direction;
+};
+
+class PokeCenter {
+public:
+    char symbol;
+    Coordinate position;
+    int direction;
+};
+
+class PokeMart {
+public:
+    char symbol;
+    Coordinate position;
+    int direction;
+};
+
+class PathWE {
+public:
+    char symbol;
+    Coordinate position;
+    int direction;
+};
+
+class PathSN {
+public:
+    char symbol;
+    Coordinate position;
+    int direction;
+};
+
+// Declare global instances
 Hiker hiker;
-
-typedef struct {
-    char symbol;
-    Coordinate position;
-} PC;
-
 PC pc;
-
-typedef struct {
-    char symbol;
-    Coordinate position;
-} Rival;
-
 Rival rival;
-
-typedef struct {
-    char symbol;
-    Coordinate position;
-    int direction; 
-} Pacer;
-
 Pacer pacer;
-
-typedef struct {
-    char symbol;
-    Coordinate position;
-    int direction; 
-} Wanderer;
-
 Wanderer wanderer;
-
-typedef struct {
-    char symbol;
-    Coordinate position;
-} Sentrie;
-
 Sentrie sentrie;
-
-typedef struct {
-    char symbol;
-    Coordinate position;
-    int direction; 
-} Explorer;
-
 Explorer explorer;
-
-typedef struct {
-    char symbol;
-    Coordinate position;
-    int direction; 
-} PokeCenter;
-
 PokeCenter pokeCenter;
-
-typedef struct {
-    char symbol;
-    Coordinate position;
-    int direction; 
-} PokeMart;
-
 PokeMart pokeMart;
-
-typedef struct {
-    char symbol;
-    Coordinate position;
-    int direction; 
-} PathWE;
-
 PathWE ewPath;
-
-typedef struct {
-    char symbol;
-    Coordinate position;
-    int direction; 
-} PathSN;
-
-PathWE snPath;
+PathSN snPath;
 
 int hikerDirection = 0; 
 int rivalDirection = 0; 
@@ -214,7 +221,7 @@ int main(int argc, char* argv[]) {
 
     srand(time(NULL));
 
-    Map (*map)[MAPSY] = malloc(MAPSX * sizeof(Map[MAPSY]));
+    Map (*map)[MAPSY] = (Map (*)[MAPSY])malloc(MAPSX * sizeof(Map[MAPSY]));
     // Check if memory allocation was successful
     if (map == NULL) {
         fprintf(stderr, "Memory allocation failed\n");
