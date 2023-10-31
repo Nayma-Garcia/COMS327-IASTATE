@@ -6,6 +6,11 @@
 #include <limits.h> 
 #include <string.h>
 #include <ncurses.h>
+#include <iostream>
+#include <fstream>
+#include <string>
+#include <vector>
+#include <sstream>
 
 #define MAPSX 401
 #define MAPSY 401
@@ -197,6 +202,8 @@ int getNewXforPC();
 int getNewYforPC();
 void placePC(int pcX, int pcY);
 void placePCFly(Map *map);
+void printCSV();
+void parseAndPrintStatsFile();
 
 
 
@@ -210,7 +217,9 @@ int newXforPC;
 int newYforPC;
 
 int main(int argc, char* argv[]) {
+    parseAndPrintStatsFile();
 
+/*
     initscr();
     cbreak();
     noecho();
@@ -244,6 +253,9 @@ int main(int argc, char* argv[]) {
     placePCFly(&map[currentMapX][currentMapY]);
      printMap(&map[currentMapX][currentMapY]);
      mvprintw(22, 0, "Please enter a command");
+
+    //  printCSV();
+
 
 
     while ((move = getch()) != 'q') {
@@ -480,6 +492,7 @@ int main(int argc, char* argv[]) {
         }
         free(map);
         endwin();
+        */
         return 0;
     }
 
@@ -1394,7 +1407,119 @@ void clearMapAroundTrainerList() {
     }
 }
 
-//FOR TESTING
+void printCSV(WINDOW *win) {
+    const char *dbpath =  "/share/cs327/pokedex/pokedex/data/csv/";
+    const char *filename = "types.csv";
+
+    char filepath[100]; // Assuming a reasonable maximum path length
+    snprintf(filepath, sizeof(filepath), "%s%s", dbpath, filename); // Concatenate the directory and filename
+
+    FILE *f = fopen(filepath, "r");
+
+    if (f == NULL) {
+        perror("Error opening the file");
+        return;
+    }
+
+    char line[100]; // Adjust the buffer size according to your needs
+    int y = 25; // Starting y-coordinate for printing, adjusted to 25
+
+    while (fgets(line, sizeof(line), f) != NULL) {
+        // Print the line under the map within the ncurses window
+        mvwprintw(win, y, 0, "%s", line);
+        y++; // Move to the next line
+    }
+
+    fclose(f);
+    wrefresh(win); // Refresh the ncurses window to display the changes
+}
+
+void printCSV() {
+    const char *dbpath =  "/share/cs327/pokedex/pokedex/data/csv/";
+    const char *filename = "stats.csv";
+
+    char filepath[100]; 
+    snprintf(filepath, sizeof(filepath), "%s%s", dbpath, filename); 
+
+    FILE *f = fopen(filepath, "r");
+
+    if (f == NULL) {
+        perror("Error opening the file");
+        return;
+    }
+
+    char line[100]; 
+    int y = 25; 
+
+    while (fgets(line, sizeof(line), f) != NULL) {
+        mvprintw(y, 0, "%s", line);
+        y++; 
+    }
+
+    fclose(f);
+}
+
+class Stat {
+public:
+    int id;
+    int damage_class_id;
+    std::string identifier;
+    bool is_battle_only;
+    int game_index;
+};
+
+
+
+void parseAndPrintStatsFile() {
+    const char *dbpath = "/share/cs327/pokedex/pokedex/data/csv/";
+    const char *filename = "stats.csv";
+
+    std::string filepath = std::string(dbpath) + filename;
+
+    std::ifstream file(filepath);
+
+    if (!file.is_open()) {
+        std::cerr << "Error opening the file" << std::endl;
+        return; // Return early if the file can't be opened.
+    }
+
+    std::string line;
+    while (std::getline(file, line)) {
+        std::istringstream iss(line);
+        std::string token;
+        Stat stat;
+
+        // Parse the CSV line into the Stat class members
+        if (std::getline(iss, token, ','))
+            stat.id = std::atoi(token.c_str()); // Use atoi to handle conversion
+        if (std::getline(iss, token, ','))
+            stat.damage_class_id = token.empty() ? 0 : std::atoi(token.c_str());
+        if (std::getline(iss, token, ','))
+            stat.identifier = token;
+        if (std::getline(iss, token, ','))
+            stat.is_battle_only = token == "1";
+        if (std::getline(iss, token))
+            stat.game_index = token.empty() ? 0 : std::atoi(token.c_str());
+
+        // Print the CSV line as it is
+        std::cout << line << std::endl;
+    }
+
+    file.close();
+}
+
+
+
+
+
+
+
+
+
+
+
+
+//FOR TESTING IGNORE
 void setNewXforPC(int x){
     newXforPC =  x;
 }
