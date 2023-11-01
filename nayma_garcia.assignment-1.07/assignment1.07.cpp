@@ -204,6 +204,7 @@ void placePC(int pcX, int pcY);
 void placePCFly(Map *map);
 void printCSV();
 void parseAndPrintStatsFile();
+void parseAndPrintPokemonFile();
 
 
 
@@ -217,7 +218,8 @@ int newXforPC;
 int newYforPC;
 
 int main(int argc, char* argv[]) {
-    parseAndPrintStatsFile();
+   // parseAndPrintStatsFile();
+     parseAndPrintPokemonFile();
 
 /*
     initscr();
@@ -1464,7 +1466,7 @@ public:
     int id;
     int damage_class_id;
     std::string identifier;
-    bool is_battle_only;
+    int is_battle_only;
     int game_index;
 };
 
@@ -1509,6 +1511,69 @@ void parseAndPrintStatsFile() {
 }
 
 
+class Pokemon {
+public:
+    int id;
+    std::string identifier;
+    int species_id;
+    int height;
+    int weight;
+    int base_experience;
+    int order;
+    int is_default;
+};
+
+
+void parseAndPrintPokemonFile() {
+    const char *dbpath = "/share/cs327/pokedex/pokedex/data/csv/";
+    const char *filename = "pokemon.csv";
+
+    std::string filepath = std::string(dbpath) + filename;
+
+    std::ifstream file(filepath);
+
+    if (!file.is_open()) {
+        std::cerr << "Error opening the file" << std::endl;
+        return; // Return early if the file can't be opened.
+    }
+
+    std::string header;
+    if (std::getline(file, header)) {
+        // Print the header line
+        std::cout << header << std::endl;
+    }
+
+    std::string line;
+    while (std::getline(file, line)) {
+        std::istringstream iss(line);
+        std::string token;
+        Pokemon pokemon;
+
+        if (std::getline(iss, token, ','))
+            pokemon.id = std::atoi(token.c_str());
+        if (std::getline(iss, token, ','))
+            pokemon.identifier = token;
+        if (std::getline(iss, token, ','))
+            pokemon.species_id = std::atoi(token.c_str());
+        if (std::getline(iss, token, ','))
+            pokemon.height = std::atoi(token.c_str()); // Assuming this field should be an integer
+        if (std::getline(iss, token, ','))
+            pokemon.weight = std::atoi(token.c_str()); // Assuming this field should be an integer
+        if (std::getline(iss, token, ','))
+            pokemon.base_experience = std::atoi(token.c_str()); // Assuming this field should be an integer
+        if (std::getline(iss, token, ','))
+            pokemon.order = std::atoi(token.c_str()); // Assuming this field should be an integer
+        if (std::getline(iss, token))
+            pokemon.is_default = (token == "1"); // Assuming this field should be a boolean
+
+        // Print the CSV line as it is
+        std::cout << line << std::endl;
+
+        // You can work with the 'pokemon' object as needed here.
+    }
+
+    file.close();
+}
 
 
 
