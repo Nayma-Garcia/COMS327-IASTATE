@@ -207,6 +207,8 @@ void parseAndPrintStatsFile();
 void parseAndPrintPokemonFile();
 void parseAndPrintMovesFile();
 void parseAndPrintPokemonMovesFile();
+void parseAndPrintPokemonSpeciesFile();
+void parseAndPrintExperienceFile();
 
 
 
@@ -223,7 +225,9 @@ int main(int argc, char* argv[]) {
     //parseAndPrintStatsFile();
      //parseAndPrintPokemonFile();
     // parseAndPrintMovesFile();
-    parseAndPrintPokemonMovesFile();
+    //parseAndPrintPokemonMovesFile();
+    //parseAndPrintPokemonSpeciesFile();
+    parseAndPrintExperienceFile();
 
 /*
     initscr();
@@ -1662,8 +1666,6 @@ void parseAndPrintMovesFile() {
     file.close();
 }
 
-//pokemon_id,     version_group_id,      move_id,       pokemon_move_method_id,     level,   order
-
 
 class PokemonMoves {
 public:
@@ -1675,55 +1677,51 @@ public:
     int order;
 };
 
+//WHY IS THIS NOT WORKING
 void parseAndPrintPokemonMovesFile() {
-    const char *dbpath = "/share/cs327/pokedex/pokedex/data/csv/";
-    const char *filename = "pokemon_moves.csv";
+    // const char *dbpath = "/share/cs327/pokedex/pokedex/data/csv/";
+    // const char *filename = "pokemon_moves.csv";
 
-    std::string filepath = std::string(dbpath) + filename;
+    // std::string filepath = std::string(dbpath) + filename;
 
-    std::ifstream file(filepath);
+    // std::ifstream file(filepath);
 
-    if (!file.is_open()) {
-        std::cerr << "Error opening the file" << std::endl;
-        return; // Return early if the file can't be opened.
-    }
+    // if (!file.is_open()) {
+    //     std::cerr << "Error opening the file" << std::endl;
+    //     return; 
+    // }
 
-    std::string header;
-    if (std::getline(file, header)) {
-        // Print the header line
-        std::cout << header << std::endl;
-    }
+    // std::string header;
+    // if (std::getline(file, header)) {
+    //     std::cout << header << std::endl;
+    // }
 
-    std::string line;
+    // std::string line;
+    // while (std::getline(file, line)) {
+    //     std::istringstream iss(line);
+    //     std::string token;
+    //     PokemonMoves pokeMoves; 
 
-    while (std::getline(file, line)) {
-        std::istringstream iss(line);
-        std::string token;
-        PokemonMoves pokeMoves;
+    //     if (std::getline(iss, token, ','))
+    //         pokeMoves.pokemon_id = std::atoi(token.c_str());
+    //     if (std::getline(iss, token, ','))
+    //         pokeMoves.version_group_id = std::atoi(token.c_str());
+    //     if (std::getline(iss, token, ','))
+    //         pokeMoves.move_id = std::atoi(token.c_str());
+    //     if (std::getline(iss, token, ','))
+    //         pokeMoves.pokemon_move_method_id = std::atoi(token.c_str());
+    //     if (std::getline(iss, token, ','))
+    //         pokeMoves.level = std::atoi(token.c_str());
+    //     if (std::getline(iss, token, ','))
+    //         pokeMoves.order = std::atoi(token.c_str());
+        
 
-        if (std::getline(iss, token, ','))
-            pokeMoves.pokemon_id = std::atoi(token.c_str());
-        if (std::getline(iss, token, ','))
-            pokeMoves.version_group_id = std::atoi(token.c_str());
-        if (std::getline(iss, token, ','))
-            pokeMoves.move_id = std::atoi(token.c_str());
-        if (std::getline(iss, token, ','))
-            pokeMoves.pokemon_move_method_id = std::atoi(token.c_str());
-        if (std::getline(iss, token, ','))
-            pokeMoves.level = std::atoi(token.c_str());
-        if (std::getline(iss, token, ','))
-            pokeMoves.order = std::atoi(token.c_str());
+    //     std::cout << line << std::endl;
 
-        // Print the CSV 
-        std::cout << line << std::endl;
+    // }
 
-    }
-
-    file.close();
+    // file.close();
 }
-
-id,   identifier,   generation_id,      evolves_from_species_id,       evolution_chain_id,     color_id,  \   shape_id,     \  habitat_id,    gender_rate,    capture_rate,    base_happiness,   is_baby,    hatch_counter,    has_gender_differences,   
- growth_rate_id,    forms_switchable,     is_legendary,    is_mythical,    order,    conquest_order
 
 
 class PokemonSpecies {
@@ -1744,7 +1742,7 @@ public:
     int has_gender_differences;
     int growth_rate_id;
     int forms_switchable;
-    int is_legendary:
+    int is_legendary;
     int is_mythical;
     int order;
     int conquest_order;
@@ -1752,7 +1750,7 @@ public:
 
 void parseAndPrintPokemonSpeciesFile() {
     const char *dbpath = "/share/cs327/pokedex/pokedex/data/csv/";
-    const char *filename = "moves.csv";
+    const char *filename = "pokemon_species.csv";
 
     std::string filepath = std::string(dbpath) + filename;
 
@@ -1781,39 +1779,38 @@ void parseAndPrintPokemonSpeciesFile() {
         if (std::getline(iss, token, ','))
             pokeSpecies.generation_id = std::atoi(token.c_str());
         if (std::getline(iss, token, ','))
-            pokeSpecies.type_id = std::atoi(token.c_str());
+            pokeSpecies.evolution_chain_id = std::atoi(token.c_str());
         if (std::getline(iss, token, ','))
-            pokeSpecies.power = std::atoi(token.c_str());
+            pokeSpecies.color_id = std::atoi(token.c_str());
         if (std::getline(iss, token, ','))
-            pokeSpecies.pp = std::atoi(token.c_str());
+            pokeSpecies.shape_id = std::atoi(token.c_str());
         if (std::getline(iss, token, ','))
-            pokeSpecies.accuracy = std::atoi(token.c_str());
+            pokeSpecies.habitat_id = std::atoi(token.c_str());
         if (std::getline(iss, token, ','))
-            pokeSpecies.priority = std::atoi(token.c_str());
+            pokeSpecies.gender_rate = std::atoi(token.c_str());
         if (std::getline(iss, token, ','))
-            pokeSpecies.target_id = std::atoi(token.c_str());
+            pokeSpecies.capture_rate = std::atoi(token.c_str());
         if (std::getline(iss, token, ','))
-            pokeSpecies.damage_class_id = std::atoi(token.c_str());
+            pokeSpecies.base_happiness = std::atoi(token.c_str());
         if (std::getline(iss, token, ','))
-            pokeSpecies.effect_id = std::atoi(token.c_str());
+            pokeSpecies.is__baby = std::atoi(token.c_str());
         if (std::getline(iss, token, ','))
-            pokeSpecies.effect_chance = std::atoi(token.c_str());
+            pokeSpecies.hatch_counter = std::atoi(token.c_str());
         if (std::getline(iss, token, ','))
-            pokeSpecies.contest_type_id = std::atoi(token.c_str());
+            pokeSpecies.has_gender_differences = std::atoi(token.c_str());
         if (std::getline(iss, token, ','))
-            pokeSpecies.contest_effect_id = std::atoi(token.c_str());
+            pokeSpecies.growth_rate_id = std::atoi(token.c_str());
         if (std::getline(iss, token))
-            pokeSpecies.super_contest_effect_id = std::atoi(token.c_str());
+            pokeSpecies.forms_switchable = std::atoi(token.c_str());
          if (std::getline(iss, token, ','))
-            pokeSpecies.effect_id = std::atoi(token.c_str());
+            pokeSpecies.is_legendary = std::atoi(token.c_str());
         if (std::getline(iss, token, ','))
-            pokeSpecies.effect_chance = std::atoi(token.c_str());
+            pokeSpecies.is_mythical = std::atoi(token.c_str());
         if (std::getline(iss, token, ','))
-            pokeSpecies.contest_type_id = std::atoi(token.c_str());
+            pokeSpecies.order = std::atoi(token.c_str());
         if (std::getline(iss, token, ','))
-            pokeSpecies.contest_effect_id = std::atoi(token.c_str());
-        if (std::getline(iss, token))
-            pokeSpecies.super_contest_effect_id = std::atoi(token.c_str());
+            pokeSpecies.conquest_order = std::atoi(token.c_str());
+    
 
         std::cout << line << std::endl;
 
@@ -1822,6 +1819,52 @@ void parseAndPrintPokemonSpeciesFile() {
     file.close();
 }
 
+
+class Experience {
+public:
+   int growth_rate_id;
+   int level;
+   int experience;
+};
+
+//WHYYYYY
+void parseAndPrintExperienceFile() {
+    // const char *dbpath = "/share/cs327/pokedex/pokedex/data/csv/";
+    // const char *filename = "experience.csv";
+
+    // std::string filepath = std::string(dbpath) + filename;
+
+    // std::ifstream file(filepath);
+
+    // if (!file.is_open()) {
+    //     std::cerr << "Error opening the file" << std::endl;
+    //     return; // Return early if the file can't be opened.
+    // }
+
+    // std::string header;
+    // if (std::getline(file, header)) {
+    //     std::cout << header << std::endl;
+    // }
+
+    // std::string line;
+    // while (std::getline(file, line)) {
+    //     std::istringstream iss(line);
+    //     std::string token;
+    //     Experience experiences;
+
+    //     if (std::getline(iss, token, ','))
+    //         experiences.growth_rate_id = std::atoi(token.c_str());
+    //     if (std::getline(iss, token, ','))
+    //         experiences.level = std::atoi(token.c_str());
+    //     if (std::getline(iss, token, ','))
+    //         experiences.experience = std::atoi(token.c_str());
+
+    //     std::cout << line << std::endl;
+
+    // }
+
+    // file.close();
+}
 
 
 
