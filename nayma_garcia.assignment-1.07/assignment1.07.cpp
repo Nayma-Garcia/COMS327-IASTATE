@@ -206,6 +206,7 @@ void printCSV();
 void parseAndPrintStatsFile();
 void parseAndPrintPokemonFile();
 void parseAndPrintMovesFile();
+void parseAndPrintPokemonMovesFile();
 
 
 
@@ -219,9 +220,10 @@ int newXforPC;
 int newYforPC;
 
 int main(int argc, char* argv[]) {
-   // parseAndPrintStatsFile();
+    //parseAndPrintStatsFile();
      //parseAndPrintPokemonFile();
-     parseAndPrintMovesFile();
+    // parseAndPrintMovesFile();
+    parseAndPrintPokemonMovesFile();
 
 /*
     initscr();
@@ -1613,7 +1615,6 @@ void parseAndPrintMovesFile() {
 
     std::string header;
     if (std::getline(file, header)) {
-        // Print the header line
         std::cout << header << std::endl;
     }
 
@@ -1621,7 +1622,7 @@ void parseAndPrintMovesFile() {
     while (std::getline(file, line)) {
         std::istringstream iss(line);
         std::string token;
-        Moves move; // Use the Moves class to store move data
+        Moves move; 
 
         if (std::getline(iss, token, ','))
             move.id = std::atoi(token.c_str());
@@ -1654,10 +1655,68 @@ void parseAndPrintMovesFile() {
         if (std::getline(iss, token))
             move.super_contest_effect_id = std::atoi(token.c_str());
 
-        // Print the CSV line as it is
         std::cout << line << std::endl;
 
-        // You can work with the 'move' object as needed here.
+    }
+
+    file.close();
+}
+
+//pokemon_id,     version_group_id,      move_id,       pokemon_move_method_id,     level,   order
+
+
+class Pokemon_Moves {
+public:
+    int pokemon_id; 
+    int version_group_id;
+    int move_id;
+    int pokemon_move_method_id;
+    int level;
+    int order;
+};
+
+void parseAndPrintPokemonMovesFile() {
+    const char *dbpath = "/share/cs327/pokedex/pokedex/data/csv/";
+    const char *filename = "pokemon_moves.csv";
+
+    std::string filepath = std::string(dbpath) + filename;
+
+    std::ifstream file(filepath);
+
+    if (!file.is_open()) {
+        std::cerr << "Error opening the file" << std::endl;
+        return; // Return early if the file can't be opened.
+    }
+
+    std::string header;
+    if (std::getline(file, header)) {
+        // Print the header line
+        std::cout << header << std::endl;
+    }
+
+    std::string line;
+
+    while (std::getline(file, line)) {
+        std::istringstream iss(line);
+        std::string token;
+        Pokemon_Moves pokeMoves;
+
+        if (std::getline(iss, token, ','))
+            pokeMoves.pokemon_id = std::atoi(token.c_str());
+        if (std::getline(iss, token, ','))
+            pokeMoves.version_group_id = std::atoi(token.c_str());
+        if (std::getline(iss, token, ','))
+            pokeMoves.move_id = std::atoi(token.c_str());
+        if (std::getline(iss, token, ','))
+            pokeMoves.pokemon_move_method_id = std::atoi(token.c_str());
+        if (std::getline(iss, token, ','))
+            pokeMoves.level = std::atoi(token.c_str());
+        if (std::getline(iss, token, ','))
+            pokeMoves.order = std::atoi(token.c_str());
+
+        // Print the CSV 
+        std::cout << line << std::endl;
+
     }
 
     file.close();
