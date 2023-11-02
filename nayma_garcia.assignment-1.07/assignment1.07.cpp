@@ -205,6 +205,7 @@ void placePCFly(Map *map);
 void printCSV();
 void parseAndPrintStatsFile();
 void parseAndPrintPokemonFile();
+void parseAndPrintMovesFile();
 
 
 
@@ -219,7 +220,8 @@ int newYforPC;
 
 int main(int argc, char* argv[]) {
    // parseAndPrintStatsFile();
-     parseAndPrintPokemonFile();
+     //parseAndPrintPokemonFile();
+     parseAndPrintMovesFile();
 
 /*
     initscr();
@@ -1523,7 +1525,6 @@ public:
     int is_default;
 };
 
-
 void parseAndPrintPokemonFile() {
     const char *dbpath = "/share/cs327/pokedex/pokedex/data/csv/";
     const char *filename = "pokemon.csv";
@@ -1569,11 +1570,99 @@ void parseAndPrintPokemonFile() {
         // Print the CSV line as it is
         std::cout << line << std::endl;
 
-        // You can work with the 'pokemon' object as needed here.
+    }
+
+
+    file.close();
+}
+
+//id,   identifier,   generation_id,    type_id,     power,     pp,     accuracy,     priority,      target_id,     damage_class_id,    effect_id,     effect_chance,      contest_type_id,    contest_effect_id,        super_contest_effect_id
+
+
+class Moves {
+public:
+    int id;
+    std::string identifier;
+    int generation_id;
+    int type_id;
+    int power;
+    int pp;
+    int accuracy;
+    int priority;
+    int target_id;
+    int damage_class_id;
+    int effect_id;
+    int effect_chance;
+    int contest_type_id;
+    int contest_effect_id;
+    int super_contest_effect_id;
+};
+
+void parseAndPrintMovesFile() {
+    const char *dbpath = "/share/cs327/pokedex/pokedex/data/csv/";
+    const char *filename = "moves.csv";
+
+    std::string filepath = std::string(dbpath) + filename;
+
+    std::ifstream file(filepath);
+
+    if (!file.is_open()) {
+        std::cerr << "Error opening the file" << std::endl;
+        return; // Return early if the file can't be opened.
+    }
+
+    std::string header;
+    if (std::getline(file, header)) {
+        // Print the header line
+        std::cout << header << std::endl;
+    }
+
+    std::string line;
+    while (std::getline(file, line)) {
+        std::istringstream iss(line);
+        std::string token;
+        Moves move; // Use the Moves class to store move data
+
+        if (std::getline(iss, token, ','))
+            move.id = std::atoi(token.c_str());
+        if (std::getline(iss, token, ','))
+            move.identifier = token;
+        if (std::getline(iss, token, ','))
+            move.generation_id = std::atoi(token.c_str());
+        if (std::getline(iss, token, ','))
+            move.type_id = std::atoi(token.c_str());
+        if (std::getline(iss, token, ','))
+            move.power = std::atoi(token.c_str());
+        if (std::getline(iss, token, ','))
+            move.pp = std::atoi(token.c_str());
+        if (std::getline(iss, token, ','))
+            move.accuracy = std::atoi(token.c_str());
+        if (std::getline(iss, token, ','))
+            move.priority = std::atoi(token.c_str());
+        if (std::getline(iss, token, ','))
+            move.target_id = std::atoi(token.c_str());
+        if (std::getline(iss, token, ','))
+            move.damage_class_id = std::atoi(token.c_str());
+        if (std::getline(iss, token, ','))
+            move.effect_id = std::atoi(token.c_str());
+        if (std::getline(iss, token, ','))
+            move.effect_chance = std::atoi(token.c_str());
+        if (std::getline(iss, token, ','))
+            move.contest_type_id = std::atoi(token.c_str());
+        if (std::getline(iss, token, ','))
+            move.contest_effect_id = std::atoi(token.c_str());
+        if (std::getline(iss, token))
+            move.super_contest_effect_id = std::atoi(token.c_str());
+
+        // Print the CSV line as it is
+        std::cout << line << std::endl;
+
+        // You can work with the 'move' object as needed here.
     }
 
     file.close();
 }
+
 
 
 
