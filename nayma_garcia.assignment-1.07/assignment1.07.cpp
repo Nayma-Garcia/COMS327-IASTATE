@@ -209,6 +209,8 @@ void parseAndPrintMovesFile();
 void parseAndPrintPokemonMovesFile();
 void parseAndPrintPokemonSpeciesFile();
 void parseAndPrintExperienceFile();
+void parseAndPrintPokemonStatsFile();
+void parseAndPrintTypeNamesFile();
 
 
 
@@ -220,291 +222,6 @@ int numtrainers = 0;
 
 int newXforPC;
 int newYforPC;
-
-int main(int argc, char* argv[]) {
-    //parseAndPrintStatsFile();
-     //parseAndPrintPokemonFile();
-    // parseAndPrintMovesFile();
-    //parseAndPrintPokemonMovesFile();
-    //parseAndPrintPokemonSpeciesFile();
-    parseAndPrintExperienceFile();
-
-/*
-    initscr();
-    cbreak();
-    noecho();
-    keypad(stdscr, TRUE);
-    nodelay(stdscr, TRUE);
-
-    start_color();
-    init_pair(PLAYER_PAIR, COLOR_RED, COLOR_BLACK);
-
-
-    srand(time(NULL));
-
-    Map (*map)[MAPSY] = (Map (*)[MAPSY])malloc(MAPSX * sizeof(Map[MAPSY]));
-    // Check if memory allocation was successful
-    if (map == NULL) {
-        fprintf(stderr, "Memory allocation failed\n");
-        return 1; // Exit with an error code
-    }
-
-        for (int x = 0; x < MAPSX; x++) {
-        for (int y = 0; y < MAPSY; y++) {
-            generateMap(&map[x][y]);
-        }
-    }
-   
-    //generateMap(&map[currentMapX][currentMapY]);
-    int move;
-    
-    genPathCM(&map[currentMapX][currentMapY], 0, 0);
-    pathGenerated[currentMapX][currentMapY] = 1;
-    placePCFly(&map[currentMapX][currentMapY]);
-     printMap(&map[currentMapX][currentMapY]);
-     mvprintw(22, 0, "Please enter a command");
-
-    //  printCSV();
-
-
-
-    while ((move = getch()) != 'q') {
-         isTrainerThere();
-        //  mvprintw(23, 0, "PC location: (%d, %d)", pc.position.x, pc.position.y);
-         mvprintw(23, 0, "Current Map: (%d, %d)", currentMapX, currentMapY);
-        //  mvprintw(25, 0, "N-S Path Y: %d", snPath.position.x);
-        //  mvprintw(26, 0, "E-W Path X: %d", ewPath.position.y);
-        //  mvprintw(27, 0, "newX & newY: (%d,%d)", getNewXforPC(), getNewYforPC());
-
-        if(move == '7' || move == 'y'){
-            updatePCLocation(&map[currentMapX][currentMapY], move);
-            updateHikerLocation(&map[currentMapX][currentMapY]);
-            updateRivalLocation(&map[currentMapX][currentMapY]);
-            updatePacerLocation(&map[currentMapX][currentMapY]);
-            updateWandererLocation(&map[currentMapX][currentMapY]);
-            updateExplorerLocation(&map[currentMapX][currentMapY]);
-            fflush(stdout);
-            usleep(50000);
-            printMap(&map[currentMapX][currentMapY]);
-        }else if(move == '8' || move == 'k'){
-        updatePCLocation(&map[currentMapX][currentMapY], move);
-            updateHikerLocation(&map[currentMapX][currentMapY]);
-            updateRivalLocation(&map[currentMapX][currentMapY]);
-            updatePacerLocation(&map[currentMapX][currentMapY]);
-            updateWandererLocation(&map[currentMapX][currentMapY]);
-            updateExplorerLocation(&map[currentMapX][currentMapY]);
-            fflush(stdout);
-            usleep(50000);
-            printMap(&map[currentMapX][currentMapY]);
-       }else if(move == '9' || move == 'u'){
-       updatePCLocation(&map[currentMapX][currentMapY], move);
-            updateHikerLocation(&map[currentMapX][currentMapY]);
-            updateRivalLocation(&map[currentMapX][currentMapY]);
-            updatePacerLocation(&map[currentMapX][currentMapY]);
-            updateWandererLocation(&map[currentMapX][currentMapY]);
-            updateExplorerLocation(&map[currentMapX][currentMapY]);
-            fflush(stdout);
-            usleep(50000);
-            printMap(&map[currentMapX][currentMapY]);
-       }else if(move =='6' || move == 'l'){
-        updatePCLocation(&map[currentMapX][currentMapY], move);
-            updateHikerLocation(&map[currentMapX][currentMapY]);
-            updateRivalLocation(&map[currentMapX][currentMapY]);
-            updatePacerLocation(&map[currentMapX][currentMapY]);
-            updateWandererLocation(&map[currentMapX][currentMapY]);
-            updateExplorerLocation(&map[currentMapX][currentMapY]);
-            fflush(stdout);
-            usleep(50000);
-            printMap(&map[currentMapX][currentMapY]);
-       }else if(move =='3' || move == 'n'){
-       updatePCLocation(&map[currentMapX][currentMapY], move);
-            updateHikerLocation(&map[currentMapX][currentMapY]);
-            updateRivalLocation(&map[currentMapX][currentMapY]);
-            updatePacerLocation(&map[currentMapX][currentMapY]);
-            updateWandererLocation(&map[currentMapX][currentMapY]);
-            updateExplorerLocation(&map[currentMapX][currentMapY]);
-            fflush(stdout);
-            usleep(50000);
-            printMap(&map[currentMapX][currentMapY]);
-       }else if(move =='2' || move == 'j'){
-        updatePCLocation(&map[currentMapX][currentMapY], move);
-            updateHikerLocation(&map[currentMapX][currentMapY]);
-            updateRivalLocation(&map[currentMapX][currentMapY]);
-            updatePacerLocation(&map[currentMapX][currentMapY]);
-            updateWandererLocation(&map[currentMapX][currentMapY]);
-            updateExplorerLocation(&map[currentMapX][currentMapY]);
-            fflush(stdout);
-            usleep(50000);
-            printMap(&map[currentMapX][currentMapY]);
-       }else if(move =='1' || move == 'b'){
-        updatePCLocation(&map[currentMapX][currentMapY], move);
-            updateHikerLocation(&map[currentMapX][currentMapY]);
-            updateRivalLocation(&map[currentMapX][currentMapY]);
-            updatePacerLocation(&map[currentMapX][currentMapY]);
-            updateWandererLocation(&map[currentMapX][currentMapY]);
-            updateExplorerLocation(&map[currentMapX][currentMapY]);
-            fflush(stdout);
-            usleep(50000);
-            printMap(&map[currentMapX][currentMapY]);
-       }else if(move =='4' || move == 'h'){
-            updatePCLocation(&map[currentMapX][currentMapY], move);
-            updateHikerLocation(&map[currentMapX][currentMapY]);
-            updateRivalLocation(&map[currentMapX][currentMapY]);
-            updatePacerLocation(&map[currentMapX][currentMapY]);
-            updateWandererLocation(&map[currentMapX][currentMapY]);
-            updateExplorerLocation(&map[currentMapX][currentMapY]);
-            fflush(stdout);
-            usleep(50000);
-            printMap(&map[currentMapX][currentMapY]);
-       }else if(move == '5' || move =='.' || move == ' '){
-            updatePCLocation(&map[currentMapX][currentMapY], move);
-            updateHikerLocation(&map[currentMapX][currentMapY]);
-            updateRivalLocation(&map[currentMapX][currentMapY]);
-            updatePacerLocation(&map[currentMapX][currentMapY]);
-            updateWandererLocation(&map[currentMapX][currentMapY]);
-            updateExplorerLocation(&map[currentMapX][currentMapY]);
-            fflush(stdout);
-            usleep(50000);
-            printMap(&map[currentMapX][currentMapY]);
-       }else if(move =='t'){
-          fflush(stdout);
-          usleep(50000);
-          printMap(&map[currentMapX][currentMapY]);
-
-          clearMapAroundTrainerList();
-          //hiker
-          hikerPosFromPC(hiker.position.x, hiker.position.y,pc.position.x, pc.position.y);
-          //rival
-          rivalPosFromPC(rival.position.x, rival.position.y,pc.position.x, pc.position.y);
-          //pacer
-          pacerPosFromPC(pacer.position.x, pacer.position.y,pc.position.x, pc.position.y);
-          //wanderer
-          wandererPosFromPC(wanderer.position.x, wanderer.position.y,pc.position.x, pc.position.y);
-          //sentrie
-          sentriePosFromPC(sentrie.position.x, sentrie.position.y,pc.position.x, pc.position.y);
-          //explorer
-          explorerPosFromPC(explorer.position.x, explorer.position.y,pc.position.x, pc.position.y);
-
-       }else if(move == '>' && isPConCorM(&map[currentMapX][currentMapY]) == 1){
-         mvprintw(22, 0, "Welcome to the PokeCenter!");
-       }else if (move == '>' && isPConCorM(&map[currentMapX][currentMapY]) == 2){
-        mvprintw(22, 0, "Welcome to the PokeMart!");
-       }else if(move == '<' || move == 27){
-            updatePCLocation(&map[currentMapX][currentMapY], move);
-            fflush(stdout);
-            usleep(500000);
-            printMap(&map[currentMapX][currentMapY]);
-
-       }else if (pc.position.x == WIDTH - 1) {
-                if (currentMapX + 1 < MAPSX) {
-                    placePC(1, pc.position.y);
-                    currentMapX++;
-                    if(pathGenerated[currentMapX][currentMapY] == 0){
-                        genPathCM(&map[currentMapX][currentMapY], 0, ewPath.position.y); 
-                        pathGenerated[currentMapX][currentMapY] = 1;
-                    }
-                    printMap(&map[currentMapX][currentMapY]);
-            } 
-    }else if (pc.position.x <= 0) {
-        // Move to the left map
-        if (currentMapX - 1 >= 0) {
-           placePC(78, pc.position.y);
-            currentMapX--;
-                 if(pathGenerated[currentMapX][currentMapY] == 0){
-                        genPathCM(&map[currentMapX][currentMapY], 0, ewPath.position.y); 
-                        pathGenerated[currentMapX][currentMapY] = 1;
-                 }
-            printMap(&map[currentMapX][currentMapY]);
-        } 
-    }else if (pc.position.y >= LENGTH - 1) {
-        // Move to the right map   
-                if (currentMapY + 1 < MAPSY) {
-                    placePC(pc.position.x, 1);
-                    currentMapY++;
-                if(pathGenerated[currentMapX][currentMapY] == 0){
-                        genPathCM(&map[currentMapX][currentMapY], snPath.position.x, 0); 
-                        pathGenerated[currentMapX][currentMapY] = 1;
-                 }
-                     
-                    printMap(&map[currentMapX][currentMapY]);
-                } 
-    } else if (pc.position.y <= 0) {
-        // Move to the left map
-        if (currentMapY - 1 >= 0) {
-            placePC(pc.position.x, 19);
-            currentMapY--;
-            if(pathGenerated[currentMapX][currentMapY] == 0){
-                    genPathCM(&map[currentMapX][currentMapY], snPath.position.x, 0); 
-                    pathGenerated[currentMapX][currentMapY] = 1;
-            }
-            printMap(&map[currentMapX][currentMapY]);
-        } 
-    }else if (move == 'f'){
-    int x, y;
-        mvprintw(28, 0, "Enter the X coordinate: ");
-        refresh();
-
-        char x_input[20];
-        int x_index = 0;
-        int ch;
-
-        while (1) {
-            ch = getch();
-            if (ch == '\n') {
-                break; // Exit the loop when Enter is pressed
-            } else if (ch >= '0' && ch <= '9' && x_index < 19) {
-                x_input[x_index++] = ch;
-                printw("%c", ch);
-            }
-        }
-        x_input[x_index] = '\0';
-
-        if (sscanf(x_input, "%d", &x) != 1) {
-            mvprintw(23, 0, "Invalid X coordinate. Please enter a valid integer.");
-            refresh();
-            break; // Exit the function if the input is invalid
-        }
-
-    mvprintw(29, 0, "Enter the Y coordinate: ");
-        refresh();
-
-        char y_input[20];
-        int y_index = 0;
-
-        while (1) {
-            ch = getch();
-            if (ch == '\n') {
-                break; // Exit the loop when Enter is pressed
-            } else if (ch >= '0' && ch <= '9' && y_index < 19) {
-                y_input[y_index++] = ch;
-                printw("%c", ch);
-            }
-        }
-        y_input[y_index] = '\0';
-
-        // Convert the Y coordinate string to an integer
-        if (sscanf(y_input, "%d", &y) != 1) {
-            mvprintw(25, 0, "Invalid Y coordinate. Please enter a valid integer.");
-            refresh();
-            break; // Exit the function if the input is invalid
-        }
-
-        currentMapX = x;
-        currentMapY = y;
-
-        genPathCM(&map[currentMapX][currentMapY], 0, 0); 
-        placePCFly(&map[currentMapX][currentMapY]);
-        printMap(&map[currentMapX][currentMapY]);
-
-        mvprintw(30, 0, "Moved to x=%d and y=%d", x, y);
-        refresh();
-    }
-        }
-        free(map);
-        endwin();
-        */
-        return 0;
-    }
 
 
 void generateMap(Map *map) {
@@ -1675,54 +1392,53 @@ public:
     int pokemon_move_method_id;
     int level;
     int order;
-};
+
 
 //WHY IS THIS NOT WORKING
-void parseAndPrintPokemonMovesFile() {
-    // const char *dbpath = "/share/cs327/pokedex/pokedex/data/csv/";
-    // const char *filename = "pokemon_moves.csv";
+    void parseAndPrintPokemonMovesFile() {
+        const char *dbpath = "/share/cs327/pokedex/pokedex/data/csv/";
+        const char *filename = "pokemon_moves.csv";
 
-    // std::string filepath = std::string(dbpath) + filename;
+        std::string filepath = std::string(dbpath) + filename;
 
-    // std::ifstream file(filepath);
+        std::ifstream file(filepath);
 
-    // if (!file.is_open()) {
-    //     std::cerr << "Error opening the file" << std::endl;
-    //     return; 
-    // }
+        if (!file.is_open()) {
+            std::cerr << "Error opening the file" << std::endl;
+            return; 
+        }
 
-    // std::string header;
-    // if (std::getline(file, header)) {
-    //     std::cout << header << std::endl;
-    // }
+        std::string header;
+        if (std::getline(file, header)) {
+            std::cout << header << std::endl;
+        }
 
-    // std::string line;
-    // while (std::getline(file, line)) {
-    //     std::istringstream iss(line);
-    //     std::string token;
-    //     PokemonMoves pokeMoves; 
+        std::string line;
+        while (std::getline(file, line)) {
+            std::istringstream iss(line);
+            std::string token;
 
-    //     if (std::getline(iss, token, ','))
-    //         pokeMoves.pokemon_id = std::atoi(token.c_str());
-    //     if (std::getline(iss, token, ','))
-    //         pokeMoves.version_group_id = std::atoi(token.c_str());
-    //     if (std::getline(iss, token, ','))
-    //         pokeMoves.move_id = std::atoi(token.c_str());
-    //     if (std::getline(iss, token, ','))
-    //         pokeMoves.pokemon_move_method_id = std::atoi(token.c_str());
-    //     if (std::getline(iss, token, ','))
-    //         pokeMoves.level = std::atoi(token.c_str());
-    //     if (std::getline(iss, token, ','))
-    //         pokeMoves.order = std::atoi(token.c_str());
-        
+            if (std::getline(iss, token, ','))
+                pokemon_id = std::atoi(token.c_str());
+            if (std::getline(iss, token, ','))
+                version_group_id = std::atoi(token.c_str());
+            if (std::getline(iss, token, ','))
+                move_id = std::atoi(token.c_str());
+            if (std::getline(iss, token, ','))
+                pokemon_move_method_id = std::atoi(token.c_str());
+            if (std::getline(iss, token, ','))
+                level = std::atoi(token.c_str());
+            if (std::getline(iss, token, ','))
+                order = std::atoi(token.c_str());
+            
 
-    //     std::cout << line << std::endl;
+            std::cout << line << std::endl;
 
-    // }
+        }
 
-    // file.close();
-}
-
+        file.close();
+    }
+};
 
 class PokemonSpecies {
 public:
@@ -1825,51 +1541,180 @@ public:
    int growth_rate_id;
    int level;
    int experience;
-};
 
 //WHYYYYY
 void parseAndPrintExperienceFile() {
-    // const char *dbpath = "/share/cs327/pokedex/pokedex/data/csv/";
-    // const char *filename = "experience.csv";
+    const char *dbpath = "/share/cs327/pokedex/pokedex/data/csv/";
+    const char *filename = "experience.csv";
 
-    // std::string filepath = std::string(dbpath) + filename;
+    std::string filepath = std::string(dbpath) + filename;
 
-    // std::ifstream file(filepath);
+    std::ifstream file(filepath);
 
-    // if (!file.is_open()) {
-    //     std::cerr << "Error opening the file" << std::endl;
-    //     return; // Return early if the file can't be opened.
-    // }
+    if (!file.is_open()) {
+        std::cerr << "Error opening the file" << std::endl;
+        return; // Return early if the file can't be opened.
+    }
 
-    // std::string header;
-    // if (std::getline(file, header)) {
-    //     std::cout << header << std::endl;
-    // }
+    std::string header;
+    if (std::getline(file, header)) {
+        std::cout << header << std::endl;
+    }
 
-    // std::string line;
-    // while (std::getline(file, line)) {
-    //     std::istringstream iss(line);
-    //     std::string token;
-    //     Experience experiences;
+    std::string line;
+    while (std::getline(file, line)) {
+        std::istringstream iss(line);
+        std::string token;
 
-    //     if (std::getline(iss, token, ','))
-    //         experiences.growth_rate_id = std::atoi(token.c_str());
-    //     if (std::getline(iss, token, ','))
-    //         experiences.level = std::atoi(token.c_str());
-    //     if (std::getline(iss, token, ','))
-    //         experiences.experience = std::atoi(token.c_str());
+        if (std::getline(iss, token, ','))
+            growth_rate_id = std::atoi(token.c_str());
+        if (std::getline(iss, token, ','))
+            level = std::atoi(token.c_str());
+        if (std::getline(iss, token, ','))
+            experience = std::atoi(token.c_str());
 
-    //     std::cout << line << std::endl;
+        std::cout << line << std::endl;
 
-    // }
+    }
 
-    // file.close();
+    file.close();
+    }
+};
+
+class PokemonStats {
+public:
+    int pokemon_id;
+    int stat_id;
+    int base_stat;
+    int effort;
+
+    void parseAndSavePokemonStatsFile() {
+        const char *dbpath = "/share/cs327/pokedex/pokedex/data/csv/";
+        const char *filename = "pokemon_stats.csv";
+
+        std::string filepath = std::string(dbpath) + filename;
+
+        std::ifstream file(filepath);
+
+        if (!file.is_open()) {
+            std::cerr << "Error opening the file" << std::endl;
+            return; // Return early if the file can't be opened.
+        }
+
+        std::string header;
+        if (std::getline(file, header)) {
+            std::cout << header << std::endl;
+        }
+
+        std::string line;
+        while (std::getline(file, line)) {
+            std::istringstream iss(line);
+            std::string token;
+
+            if (std::getline(iss, token, ','))
+                pokemon_id = std::atoi(token.c_str());
+            if (std::getline(iss, token, ','))
+                stat_id = std::atoi(token.c_str());
+            if (std::getline(iss, token, ','))
+                base_stat = std::atoi(token.c_str());
+            if (std::getline(iss, token, ','))
+                effort = std::atoi(token.c_str());
+
+            std::cout << line << std::endl;
+        }
+
+        file.close();
+    }
+};
+
+class PokemonTypes {
+public:
+    int pokemon_id;
+    int type_id;
+    int slot;
+
+    void parseAndSavePokemonTypesFile() {
+        const char *dbpath = "/share/cs327/pokedex/pokedex/data/csv/";
+        const char *filename = "pokemon_types.csv";
+
+        std::string filepath = std::string(dbpath) + filename;
+
+        std::ifstream file(filepath);
+
+        if (!file.is_open()) {
+            std::cerr << "Error opening the file" << std::endl;
+            return; // Return early if the file can't be opened.
+        }
+
+        std::string header;
+        if (std::getline(file, header)) {
+            std::cout << header << std::endl;
+        }
+
+        std::string line;
+        while (std::getline(file, line)) {
+            std::istringstream iss(line);
+            std::string token;
+
+            if (std::getline(iss, token, ','))
+                pokemon_id = std::atoi(token.c_str());
+            if (std::getline(iss, token, ','))
+                type_id = std::atoi(token.c_str());
+            if (std::getline(iss, token, ','))
+                slot = std::atoi(token.c_str());
+
+            std::cout << line << std::endl;
+        }
+
+        file.close();
+    }
+};
+
+class TypeNames {
+public:
+    int type_id;
+    int local_language_id;
+    std::string name;
+};
+
+void parseAndPrintTypeNamesFile() {
+    const char *dbpath = "/share/cs327/pokedex/pokedex/data/csv/";
+    const char *filename = "type_names.csv";
+
+    std::string filepath = std::string(dbpath) + filename;
+
+    std::ifstream file(filepath);
+
+    if (!file.is_open()) {
+        std::cerr << "Error opening the file" << std::endl;
+        return; // Return early if the file can't be opened.
+    }
+
+    std::string header;
+    if (std::getline(file, header)) {
+        std::cout << header << std::endl;
+    }
+
+    std::string line;
+    while (std::getline(file, line)) {
+        std::istringstream iss(line);
+        std::string token;
+        TypeNames typeNames;
+
+        if (std::getline(iss, token, ','))
+            typeNames.type_id = std::atoi(token.c_str());
+        if (std::getline(iss, token, ','))
+            typeNames.local_language_id = std::atoi(token.c_str());
+        if (std::getline(iss, token, ','))
+            typeNames.name = token;
+    
+
+        std::cout << line << std::endl;
+
+    }
+
+    file.close();
 }
-
-
-
-
-
 
 
 
@@ -1889,3 +1734,318 @@ int getNewXforPC(){
 int getNewYforPC(){
     return newYforPC;
 }
+
+
+int main(int argc, char* argv[]) {
+
+    if (argc != 2) {
+        std::cout << "Usage: " << argv[0] << " <function_name>" << std::endl;
+        return 1;
+    }
+
+    std::string input(argv[1]);
+
+    if (input == "stats") {
+        parseAndPrintStatsFile();
+    } else if (input == "pokemon") {
+        parseAndPrintPokemonFile();
+    } else if (input == "moves") {
+        parseAndPrintMovesFile();
+    } else if (input == "pokemon_moves") {
+        PokemonMoves pokeMoves;
+        pokeMoves.parseAndPrintPokemonMovesFile();
+    } else if (input == "pokemon_species") {
+        parseAndPrintPokemonSpeciesFile();
+    } else if (input == "experience") {
+        Experience experience;
+        experience.parseAndPrintExperienceFile();
+    } else if (input == "pokemon_stats") {
+        PokemonStats stats;
+        stats.parseAndSavePokemonStatsFile();
+    } else if (input == "pokemon_types") {
+        PokemonTypes pokeTypes;
+        pokeTypes.parseAndSavePokemonTypesFile();
+    } else if (input == "type_names") {
+        parseAndPrintTypeNamesFile();
+    } else {
+        std::cout << "Invalid  name: " << input << std::endl;
+        return 1;
+    }
+
+
+/*
+    initscr();
+    cbreak();
+    noecho();
+    keypad(stdscr, TRUE);
+    nodelay(stdscr, TRUE);
+
+    start_color();
+    init_pair(PLAYER_PAIR, COLOR_RED, COLOR_BLACK);
+
+
+    srand(time(NULL));
+
+    Map (*map)[MAPSY] = (Map (*)[MAPSY])malloc(MAPSX * sizeof(Map[MAPSY]));
+    // Check if memory allocation was successful
+    if (map == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        return 1; // Exit with an error code
+    }
+
+        for (int x = 0; x < MAPSX; x++) {
+        for (int y = 0; y < MAPSY; y++) {
+            generateMap(&map[x][y]);
+        }
+    }
+   
+    //generateMap(&map[currentMapX][currentMapY]);
+    int move;
+    
+    genPathCM(&map[currentMapX][currentMapY], 0, 0);
+    pathGenerated[currentMapX][currentMapY] = 1;
+    placePCFly(&map[currentMapX][currentMapY]);
+     printMap(&map[currentMapX][currentMapY]);
+     mvprintw(22, 0, "Please enter a command");
+
+    //  printCSV();
+
+
+
+    while ((move = getch()) != 'q') {
+         isTrainerThere();
+        //  mvprintw(23, 0, "PC location: (%d, %d)", pc.position.x, pc.position.y);
+         mvprintw(23, 0, "Current Map: (%d, %d)", currentMapX, currentMapY);
+        //  mvprintw(25, 0, "N-S Path Y: %d", snPath.position.x);
+        //  mvprintw(26, 0, "E-W Path X: %d", ewPath.position.y);
+        //  mvprintw(27, 0, "newX & newY: (%d,%d)", getNewXforPC(), getNewYforPC());
+
+        if(move == '7' || move == 'y'){
+            updatePCLocation(&map[currentMapX][currentMapY], move);
+            updateHikerLocation(&map[currentMapX][currentMapY]);
+            updateRivalLocation(&map[currentMapX][currentMapY]);
+            updatePacerLocation(&map[currentMapX][currentMapY]);
+            updateWandererLocation(&map[currentMapX][currentMapY]);
+            updateExplorerLocation(&map[currentMapX][currentMapY]);
+            fflush(stdout);
+            usleep(50000);
+            printMap(&map[currentMapX][currentMapY]);
+        }else if(move == '8' || move == 'k'){
+        updatePCLocation(&map[currentMapX][currentMapY], move);
+            updateHikerLocation(&map[currentMapX][currentMapY]);
+            updateRivalLocation(&map[currentMapX][currentMapY]);
+            updatePacerLocation(&map[currentMapX][currentMapY]);
+            updateWandererLocation(&map[currentMapX][currentMapY]);
+            updateExplorerLocation(&map[currentMapX][currentMapY]);
+            fflush(stdout);
+            usleep(50000);
+            printMap(&map[currentMapX][currentMapY]);
+       }else if(move == '9' || move == 'u'){
+       updatePCLocation(&map[currentMapX][currentMapY], move);
+            updateHikerLocation(&map[currentMapX][currentMapY]);
+            updateRivalLocation(&map[currentMapX][currentMapY]);
+            updatePacerLocation(&map[currentMapX][currentMapY]);
+            updateWandererLocation(&map[currentMapX][currentMapY]);
+            updateExplorerLocation(&map[currentMapX][currentMapY]);
+            fflush(stdout);
+            usleep(50000);
+            printMap(&map[currentMapX][currentMapY]);
+       }else if(move =='6' || move == 'l'){
+        updatePCLocation(&map[currentMapX][currentMapY], move);
+            updateHikerLocation(&map[currentMapX][currentMapY]);
+            updateRivalLocation(&map[currentMapX][currentMapY]);
+            updatePacerLocation(&map[currentMapX][currentMapY]);
+            updateWandererLocation(&map[currentMapX][currentMapY]);
+            updateExplorerLocation(&map[currentMapX][currentMapY]);
+            fflush(stdout);
+            usleep(50000);
+            printMap(&map[currentMapX][currentMapY]);
+       }else if(move =='3' || move == 'n'){
+       updatePCLocation(&map[currentMapX][currentMapY], move);
+            updateHikerLocation(&map[currentMapX][currentMapY]);
+            updateRivalLocation(&map[currentMapX][currentMapY]);
+            updatePacerLocation(&map[currentMapX][currentMapY]);
+            updateWandererLocation(&map[currentMapX][currentMapY]);
+            updateExplorerLocation(&map[currentMapX][currentMapY]);
+            fflush(stdout);
+            usleep(50000);
+            printMap(&map[currentMapX][currentMapY]);
+       }else if(move =='2' || move == 'j'){
+        updatePCLocation(&map[currentMapX][currentMapY], move);
+            updateHikerLocation(&map[currentMapX][currentMapY]);
+            updateRivalLocation(&map[currentMapX][currentMapY]);
+            updatePacerLocation(&map[currentMapX][currentMapY]);
+            updateWandererLocation(&map[currentMapX][currentMapY]);
+            updateExplorerLocation(&map[currentMapX][currentMapY]);
+            fflush(stdout);
+            usleep(50000);
+            printMap(&map[currentMapX][currentMapY]);
+       }else if(move =='1' || move == 'b'){
+        updatePCLocation(&map[currentMapX][currentMapY], move);
+            updateHikerLocation(&map[currentMapX][currentMapY]);
+            updateRivalLocation(&map[currentMapX][currentMapY]);
+            updatePacerLocation(&map[currentMapX][currentMapY]);
+            updateWandererLocation(&map[currentMapX][currentMapY]);
+            updateExplorerLocation(&map[currentMapX][currentMapY]);
+            fflush(stdout);
+            usleep(50000);
+            printMap(&map[currentMapX][currentMapY]);
+       }else if(move =='4' || move == 'h'){
+            updatePCLocation(&map[currentMapX][currentMapY], move);
+            updateHikerLocation(&map[currentMapX][currentMapY]);
+            updateRivalLocation(&map[currentMapX][currentMapY]);
+            updatePacerLocation(&map[currentMapX][currentMapY]);
+            updateWandererLocation(&map[currentMapX][currentMapY]);
+            updateExplorerLocation(&map[currentMapX][currentMapY]);
+            fflush(stdout);
+            usleep(50000);
+            printMap(&map[currentMapX][currentMapY]);
+       }else if(move == '5' || move =='.' || move == ' '){
+            updatePCLocation(&map[currentMapX][currentMapY], move);
+            updateHikerLocation(&map[currentMapX][currentMapY]);
+            updateRivalLocation(&map[currentMapX][currentMapY]);
+            updatePacerLocation(&map[currentMapX][currentMapY]);
+            updateWandererLocation(&map[currentMapX][currentMapY]);
+            updateExplorerLocation(&map[currentMapX][currentMapY]);
+            fflush(stdout);
+            usleep(50000);
+            printMap(&map[currentMapX][currentMapY]);
+       }else if(move =='t'){
+          fflush(stdout);
+          usleep(50000);
+          printMap(&map[currentMapX][currentMapY]);
+
+          clearMapAroundTrainerList();
+          //hiker
+          hikerPosFromPC(hiker.position.x, hiker.position.y,pc.position.x, pc.position.y);
+          //rival
+          rivalPosFromPC(rival.position.x, rival.position.y,pc.position.x, pc.position.y);
+          //pacer
+          pacerPosFromPC(pacer.position.x, pacer.position.y,pc.position.x, pc.position.y);
+          //wanderer
+          wandererPosFromPC(wanderer.position.x, wanderer.position.y,pc.position.x, pc.position.y);
+          //sentrie
+          sentriePosFromPC(sentrie.position.x, sentrie.position.y,pc.position.x, pc.position.y);
+          //explorer
+          explorerPosFromPC(explorer.position.x, explorer.position.y,pc.position.x, pc.position.y);
+
+       }else if(move == '>' && isPConCorM(&map[currentMapX][currentMapY]) == 1){
+         mvprintw(22, 0, "Welcome to the PokeCenter!");
+       }else if (move == '>' && isPConCorM(&map[currentMapX][currentMapY]) == 2){
+        mvprintw(22, 0, "Welcome to the PokeMart!");
+       }else if(move == '<' || move == 27){
+            updatePCLocation(&map[currentMapX][currentMapY], move);
+            fflush(stdout);
+            usleep(500000);
+            printMap(&map[currentMapX][currentMapY]);
+
+       }else if (pc.position.x == WIDTH - 1) {
+                if (currentMapX + 1 < MAPSX) {
+                    placePC(1, pc.position.y);
+                    currentMapX++;
+                    if(pathGenerated[currentMapX][currentMapY] == 0){
+                        genPathCM(&map[currentMapX][currentMapY], 0, ewPath.position.y); 
+                        pathGenerated[currentMapX][currentMapY] = 1;
+                    }
+                    printMap(&map[currentMapX][currentMapY]);
+            } 
+    }else if (pc.position.x <= 0) {
+        // Move to the left map
+        if (currentMapX - 1 >= 0) {
+           placePC(78, pc.position.y);
+            currentMapX--;
+                 if(pathGenerated[currentMapX][currentMapY] == 0){
+                        genPathCM(&map[currentMapX][currentMapY], 0, ewPath.position.y); 
+                        pathGenerated[currentMapX][currentMapY] = 1;
+                 }
+            printMap(&map[currentMapX][currentMapY]);
+        } 
+    }else if (pc.position.y >= LENGTH - 1) {
+        // Move to the right map   
+                if (currentMapY + 1 < MAPSY) {
+                    placePC(pc.position.x, 1);
+                    currentMapY++;
+                if(pathGenerated[currentMapX][currentMapY] == 0){
+                        genPathCM(&map[currentMapX][currentMapY], snPath.position.x, 0); 
+                        pathGenerated[currentMapX][currentMapY] = 1;
+                 }
+                     
+                    printMap(&map[currentMapX][currentMapY]);
+                } 
+    } else if (pc.position.y <= 0) {
+        // Move to the left map
+        if (currentMapY - 1 >= 0) {
+            placePC(pc.position.x, 19);
+            currentMapY--;
+            if(pathGenerated[currentMapX][currentMapY] == 0){
+                    genPathCM(&map[currentMapX][currentMapY], snPath.position.x, 0); 
+                    pathGenerated[currentMapX][currentMapY] = 1;
+            }
+            printMap(&map[currentMapX][currentMapY]);
+        } 
+    }else if (move == 'f'){
+    int x, y;
+        mvprintw(28, 0, "Enter the X coordinate: ");
+        refresh();
+
+        char x_input[20];
+        int x_index = 0;
+        int ch;
+
+        while (1) {
+            ch = getch();
+            if (ch == '\n') {
+                break; // Exit the loop when Enter is pressed
+            } else if (ch >= '0' && ch <= '9' && x_index < 19) {
+                x_input[x_index++] = ch;
+                printw("%c", ch);
+            }
+        }
+        x_input[x_index] = '\0';
+
+        if (sscanf(x_input, "%d", &x) != 1) {
+            mvprintw(23, 0, "Invalid X coordinate. Please enter a valid integer.");
+            refresh();
+            break; // Exit the function if the input is invalid
+        }
+
+    mvprintw(29, 0, "Enter the Y coordinate: ");
+        refresh();
+
+        char y_input[20];
+        int y_index = 0;
+
+        while (1) {
+            ch = getch();
+            if (ch == '\n') {
+                break; // Exit the loop when Enter is pressed
+            } else if (ch >= '0' && ch <= '9' && y_index < 19) {
+                y_input[y_index++] = ch;
+                printw("%c", ch);
+            }
+        }
+        y_input[y_index] = '\0';
+
+        // Convert the Y coordinate string to an integer
+        if (sscanf(y_input, "%d", &y) != 1) {
+            mvprintw(25, 0, "Invalid Y coordinate. Please enter a valid integer.");
+            refresh();
+            break; // Exit the function if the input is invalid
+        }
+
+        currentMapX = x;
+        currentMapY = y;
+
+        genPathCM(&map[currentMapX][currentMapY], 0, 0); 
+        placePCFly(&map[currentMapX][currentMapY]);
+        printMap(&map[currentMapX][currentMapY]);
+
+        mvprintw(30, 0, "Moved to x=%d and y=%d", x, y);
+        refresh();
+    }
+        }
+        free(map);
+        endwin();
+        */
+        return 0;
+    }
