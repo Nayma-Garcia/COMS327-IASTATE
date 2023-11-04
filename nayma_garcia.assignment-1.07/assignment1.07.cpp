@@ -1679,14 +1679,14 @@ public:
 
 void parseAndPrintTypeNamesFile() {
     const char *dbpath = "/share/cs327/pokedex/pokedex/data/csv/";
-    int i = (strlen(getenv("HOME")) + strlen("/.poke327/pokedex/pokedex/csv") + 1);
-    char *prefix = (char *) malloc(i);
-    strcpy(prefix, getenv("HOME"));
-    strcat(prefix, "/.poke327/pokedex/pokedex/data/csv");
+    // int i = (strlen(getenv("HOME")) + strlen("/.poke327/pokedex/pokedex/csv") + 1);
+    // char *prefix = (char *) malloc(i);
+    // strcpy(prefix, getenv("HOME"));
+    // strcat(prefix, "/.poke327/pokedex/pokedex/data/csv");
 
     const char *filename = "type_names.csv";
 
-    std::string filepath = std::string(prefix) + filename;
+    std::string filepath = std::string(dbpath) + filename;
 
     std::ifstream file(filepath);
 
