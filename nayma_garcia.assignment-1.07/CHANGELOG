@@ -1,2 +1,11 @@
 10/31
     4:40pm: Started creating the files & folders for this assignment, also started working on reading a csv file from the database.
+11/01
+    3:00PM: Was able to read the files from the /share database. So i just kind of repeated the code for all the files. I then started working on saving it into classes
+
+11/03
+	4:00pm: I got all the files that had an identifier working with everything being stored in the classes but for some reason was not able to get it working for the files that only had ints
+    6:20pm: Finally figured out a solution for those files that only had ints, it ended up being pretty simple
+
+11/05
+	1:30pm : Went to office hours earlier in the week & got help with the home directory stuff. Today I actually implemented it with the rest of the files & added a check so that if it cant find the database in /share then it looks in the home and so on. Everything should be done now, turning in later.

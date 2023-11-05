@@ -1,0 +1,5 @@
+ ## WHAT THE PROGRAM DOES
+
+This program takes in a command line input (the name of the file) and then displays that file. It searches for the file in the /share database and if it cant find it there, then it look for it in the home directory ./poke327/. If it can't find it in either then it displays an "error" saying it cant locate it. It also stores everything from the files into classes & arrays
+
+
