@@ -1134,57 +1134,6 @@ void clearMapAroundTrainerList() {
     }
 }
 
-void printCSV(WINDOW *win) {
-    const char *dbpath =  "/share/cs327/pokedex/pokedex/data/csv/";
-    const char *filename = "types.csv";
-
-    char filepath[100]; // Assuming a reasonable maximum path length
-    snprintf(filepath, sizeof(filepath), "%s%s", dbpath, filename); // Concatenate the directory and filename
-
-    FILE *f = fopen(filepath, "r");
-
-    if (f == NULL) {
-        perror("Error opening the file");
-        return;
-    }
-
-    char line[100]; // Adjust the buffer size according to your needs
-    int y = 25; // Starting y-coordinate for printing, adjusted to 25
-
-    while (fgets(line, sizeof(line), f) != NULL) {
-        // Print the line under the map within the ncurses window
-        mvwprintw(win, y, 0, "%s", line);
-        y++; // Move to the next line
-    }
-
-    fclose(f);
-    wrefresh(win); // Refresh the ncurses window to display the changes
-}
-
-void printCSV() {
-    const char *dbpath =  "/share/cs327/pokedex/pokedex/data/csv/";
-    const char *filename = "stats.csv";
-
-    char filepath[100]; 
-    snprintf(filepath, sizeof(filepath), "%s%s", dbpath, filename); 
-
-    FILE *f = fopen(filepath, "r");
-
-    if (f == NULL) {
-        perror("Error opening the file");
-        return;
-    }
-
-    char line[100]; 
-    int y = 25; 
-
-    while (fgets(line, sizeof(line), f) != NULL) {
-        mvprintw(y, 0, "%s", line);
-        y++; 
-    }
-
-    fclose(f);
-}
 
 class Stat {
 public:
@@ -1196,12 +1145,56 @@ public:
 };
 
 
-
 void parseAndPrintStatsFile() {
     const char *dbpath = "/share/cs327/pokedex/pokedex/data/csv/";
     const char *filename = "stats.csv";
 
     std::string filepath = std::string(dbpath) + filename;
+
+    std::ifstream file(filepath);
+
+    if (!file.is_open()) {
+        std::cerr << "Error opening the file" << std::endl;
+        return; // Return early if the file can't be opened.
+    }
+
+    std::string line;
+    while (std::getline(file, line)) {
+        std::istringstream iss(line);
+        std::string token;
+        Stat stat;
+
+        // Parse the CSV line into the Stat class members
+        if (std::getline(iss, token, ','))
+            stat.id = std::atoi(token.c_str()); // Use atoi to handle conversion
+        if (std::getline(iss, token, ','))
+            stat.damage_class_id = token.empty() ? 0 : std::atoi(token.c_str());
+        if (std::getline(iss, token, ','))
+            stat.identifier = token;
+        if (std::getline(iss, token, ','))
+            stat.is_battle_only = token == "1";
+        if (std::getline(iss, token))
+            stat.game_index = token.empty() ? 0 : std::atoi(token.c_str());
+
+        // Print the CSV line as it is
+        std::cout << line << std::endl;
+    }
+
+    file.close();
+}
+
+void parseAndPrintStatsHomeFile() {
+    const char *filename = "stats.csv";
+
+    // Get the home directory
+    const char *homeDir = getenv("HOME");
+    if (homeDir == nullptr) {
+        std::cerr << "Error: Unable to get the home directory" << std::endl;
+        return;
+    }
+
+    // Construct the full file path
+    std::string filepath = std::string(homeDir) + "/.poke327/pokedex/pokedex/data/csv/" + filename;
 
     std::ifstream file(filepath);
 
@@ -1299,6 +1292,64 @@ void parseAndPrintPokemonFile() {
     file.close();
 }
 
+
+void parseAndPrintPokemonHomeFile() {
+   const char *filename = "pokemon.csv";
+
+    // Get the home directory
+    const char *homeDir = getenv("HOME");
+    if (homeDir == nullptr) {
+        std::cerr << "Error: Unable to get the home directory" << std::endl;
+        return;
+    }
+
+    // Construct the full file path
+    std::string filepath = std::string(homeDir) + "/.poke327/pokedex/pokedex/data/csv/" + filename;
+
+    std::ifstream file(filepath);
+
+    if (!file.is_open()) {
+        std::cerr << "Error opening the file" << std::endl;
+        return; // Return early if the file can't be opened.
+    }
+
+    std::string header;
+    if (std::getline(file, header)) {
+        // Print the header line
+        std::cout << header << std::endl;
+    }
+
+    std::string line;
+    while (std::getline(file, line)) {
+        std::istringstream iss(line);
+        std::string token;
+        Pokemon pokemon;
+
+        if (std::getline(iss, token, ','))
+            pokemon.id = std::atoi(token.c_str());
+        if (std::getline(iss, token, ','))
+            pokemon.identifier = token;
+        if (std::getline(iss, token, ','))
+            pokemon.species_id = std::atoi(token.c_str());
+        if (std::getline(iss, token, ','))
+            pokemon.height = std::atoi(token.c_str()); // Assuming this field should be an integer
+        if (std::getline(iss, token, ','))
+            pokemon.weight = std::atoi(token.c_str()); // Assuming this field should be an integer
+        if (std::getline(iss, token, ','))
+            pokemon.base_experience = std::atoi(token.c_str()); // Assuming this field should be an integer
+        if (std::getline(iss, token, ','))
+            pokemon.order = std::atoi(token.c_str()); // Assuming this field should be an integer
+        if (std::getline(iss, token))
+            pokemon.is_default = (token == "1"); // Assuming this field should be a boolean
+
+        // Print the CSV line as it is
+        std::cout << line << std::endl;
+
+    }
+
+
+    file.close();
+}
 //id,   identifier,   generation_id,    type_id,     power,     pp,     accuracy,     priority,      target_id,     damage_class_id,    effect_id,     effect_chance,      contest_type_id,    contest_effect_id,        super_contest_effect_id
 
 
@@ -1383,6 +1434,75 @@ void parseAndPrintMovesFile() {
     file.close();
 }
 
+void parseAndPrintMovesHomeFile() {
+    const char *filename = "moves.csv";
+
+    // Get the home directory
+    const char *homeDir = getenv("HOME");
+    if (homeDir == nullptr) {
+        std::cerr << "Error: Unable to get the home directory" << std::endl;
+        return;
+    }
+
+    // Construct the full file path
+    std::string filepath = std::string(homeDir) + "/.poke327/pokedex/pokedex/data/csv/" + filename;
+
+    std::ifstream file(filepath);
+
+    if (!file.is_open()) {
+        std::cerr << "Error opening the file" << std::endl;
+        return; // Return early if the file can't be opened.
+    }
+
+    std::string header;
+    if (std::getline(file, header)) {
+        std::cout << header << std::endl;
+    }
+
+    std::string line;
+    while (std::getline(file, line)) {
+        std::istringstream iss(line);
+        std::string token;
+        Moves move; 
+
+        if (std::getline(iss, token, ','))
+            move.id = std::atoi(token.c_str());
+        if (std::getline(iss, token, ','))
+            move.identifier = token;
+        if (std::getline(iss, token, ','))
+            move.generation_id = std::atoi(token.c_str());
+        if (std::getline(iss, token, ','))
+            move.type_id = std::atoi(token.c_str());
+        if (std::getline(iss, token, ','))
+            move.power = std::atoi(token.c_str());
+        if (std::getline(iss, token, ','))
+            move.pp = std::atoi(token.c_str());
+        if (std::getline(iss, token, ','))
+            move.accuracy = std::atoi(token.c_str());
+        if (std::getline(iss, token, ','))
+            move.priority = std::atoi(token.c_str());
+        if (std::getline(iss, token, ','))
+            move.target_id = std::atoi(token.c_str());
+        if (std::getline(iss, token, ','))
+            move.damage_class_id = std::atoi(token.c_str());
+        if (std::getline(iss, token, ','))
+            move.effect_id = std::atoi(token.c_str());
+        if (std::getline(iss, token, ','))
+            move.effect_chance = std::atoi(token.c_str());
+        if (std::getline(iss, token, ','))
+            move.contest_type_id = std::atoi(token.c_str());
+        if (std::getline(iss, token, ','))
+            move.contest_effect_id = std::atoi(token.c_str());
+        if (std::getline(iss, token))
+            move.super_contest_effect_id = std::atoi(token.c_str());
+
+        std::cout << line << std::endl;
+
+    }
+
+    file.close();
+}
+
 
 class PokemonMoves {
 public:
@@ -1406,6 +1526,57 @@ public:
         if (!file.is_open()) {
             std::cerr << "Error opening the file" << std::endl;
             return; 
+        }
+
+        std::string header;
+        if (std::getline(file, header)) {
+            std::cout << header << std::endl;
+        }
+
+        std::string line;
+        while (std::getline(file, line)) {
+            std::istringstream iss(line);
+            std::string token;
+
+            if (std::getline(iss, token, ','))
+                pokemon_id = std::atoi(token.c_str());
+            if (std::getline(iss, token, ','))
+                version_group_id = std::atoi(token.c_str());
+            if (std::getline(iss, token, ','))
+                move_id = std::atoi(token.c_str());
+            if (std::getline(iss, token, ','))
+                pokemon_move_method_id = std::atoi(token.c_str());
+            if (std::getline(iss, token, ','))
+                level = std::atoi(token.c_str());
+            if (std::getline(iss, token, ','))
+                order = std::atoi(token.c_str());
+            
+
+            std::cout << line << std::endl;
+
+        }
+
+        file.close();
+    }
+
+     void parseAndPrintPokemonMovesHomeFile() {
+        const char *filename = "pokemon_moves.csv";
+
+        // Get the home directory
+        const char *homeDir = getenv("HOME");
+        if (homeDir == nullptr) {
+            std::cerr << "Error: Unable to get the home directory" << std::endl;
+            return;
+        }
+
+        // Construct the full file path
+        std::string filepath = std::string(homeDir) + "/.poke327/pokedex/pokedex/data/csv/" + filename;
+
+        std::ifstream file(filepath);
+
+        if (!file.is_open()) {
+            std::cerr << "Error opening the file" << std::endl;
+            return; // Return early if the file can't be opened.
         }
 
         std::string header;
@@ -1535,6 +1706,83 @@ void parseAndPrintPokemonSpeciesFile() {
     file.close();
 }
 
+void parseAndPrintPokemonSpeciesHomeFile() {
+    const char *filename = "pokemon_species.csv";
+        // Get the home directory
+        const char *homeDir = getenv("HOME");
+        if (homeDir == nullptr) {
+            std::cerr << "Error: Unable to get the home directory" << std::endl;
+            return;
+        }
+
+        // Construct the full file path
+        std::string filepath = std::string(homeDir) + "/.poke327/pokedex/pokedex/data/csv/" + filename;
+
+        std::ifstream file(filepath);
+
+        if (!file.is_open()) {
+            std::cerr << "Error opening the file" << std::endl;
+            return; // Return early if the file can't be opened.
+        }
+
+    std::string header;
+    if (std::getline(file, header)) {
+        std::cout << header << std::endl;
+    }
+
+    std::string line;
+    while (std::getline(file, line)) {
+        std::istringstream iss(line);
+        std::string token;
+        PokemonSpecies pokeSpecies;
+
+        if (std::getline(iss, token, ','))
+            pokeSpecies.id = std::atoi(token.c_str());
+        if (std::getline(iss, token, ','))
+            pokeSpecies.identifier = token;
+        if (std::getline(iss, token, ','))
+            pokeSpecies.generation_id = std::atoi(token.c_str());
+        if (std::getline(iss, token, ','))
+            pokeSpecies.evolution_chain_id = std::atoi(token.c_str());
+        if (std::getline(iss, token, ','))
+            pokeSpecies.color_id = std::atoi(token.c_str());
+        if (std::getline(iss, token, ','))
+            pokeSpecies.shape_id = std::atoi(token.c_str());
+        if (std::getline(iss, token, ','))
+            pokeSpecies.habitat_id = std::atoi(token.c_str());
+        if (std::getline(iss, token, ','))
+            pokeSpecies.gender_rate = std::atoi(token.c_str());
+        if (std::getline(iss, token, ','))
+            pokeSpecies.capture_rate = std::atoi(token.c_str());
+        if (std::getline(iss, token, ','))
+            pokeSpecies.base_happiness = std::atoi(token.c_str());
+        if (std::getline(iss, token, ','))
+            pokeSpecies.is__baby = std::atoi(token.c_str());
+        if (std::getline(iss, token, ','))
+            pokeSpecies.hatch_counter = std::atoi(token.c_str());
+        if (std::getline(iss, token, ','))
+            pokeSpecies.has_gender_differences = std::atoi(token.c_str());
+        if (std::getline(iss, token, ','))
+            pokeSpecies.growth_rate_id = std::atoi(token.c_str());
+        if (std::getline(iss, token))
+            pokeSpecies.forms_switchable = std::atoi(token.c_str());
+         if (std::getline(iss, token, ','))
+            pokeSpecies.is_legendary = std::atoi(token.c_str());
+        if (std::getline(iss, token, ','))
+            pokeSpecies.is_mythical = std::atoi(token.c_str());
+        if (std::getline(iss, token, ','))
+            pokeSpecies.order = std::atoi(token.c_str());
+        if (std::getline(iss, token, ','))
+            pokeSpecies.conquest_order = std::atoi(token.c_str());
+    
+
+        std::cout << line << std::endl;
+
+    }
+
+    file.close();
+}
+
 
 class Experience {
 public:
@@ -1555,6 +1803,49 @@ void parseAndPrintExperienceFile() {
         std::cerr << "Error opening the file" << std::endl;
         return; // Return early if the file can't be opened.
     }
+
+    std::string header;
+    if (std::getline(file, header)) {
+        std::cout << header << std::endl;
+    }
+
+    std::string line;
+    while (std::getline(file, line)) {
+        std::istringstream iss(line);
+        std::string token;
+
+        if (std::getline(iss, token, ','))
+            growth_rate_id = std::atoi(token.c_str());
+        if (std::getline(iss, token, ','))
+            level = std::atoi(token.c_str());
+        if (std::getline(iss, token, ','))
+            experience = std::atoi(token.c_str());
+
+        std::cout << line << std::endl;
+
+    }
+
+    file.close();
+    }
+
+    void parseAndPrintExperienceHomeFile() {
+    const char *filename = "experience.csv";
+
+    const char *homeDir = getenv("HOME");
+        if (homeDir == nullptr) {
+            std::cerr << "Error: Unable to get the home directory" << std::endl;
+            return;
+        }
+
+        // Construct the full file path
+        std::string filepath = std::string(homeDir) + "/.poke327/pokedex/pokedex/data/csv/" + filename;
+
+        std::ifstream file(filepath);
+
+        if (!file.is_open()) {
+            std::cerr << "Error opening the file" << std::endl;
+            return; // Return early if the file can't be opened.
+        }
 
     std::string header;
     if (std::getline(file, header)) {
@@ -1625,6 +1916,51 @@ public:
 
         file.close();
     }
+
+void parseAndSavePokemonStatsHomeFile() {
+        const char *filename = "pokemon_stats.csv";
+        
+        const char *homeDir = getenv("HOME");
+            if (homeDir == nullptr) {
+                std::cerr << "Error: Unable to get the home directory" << std::endl;
+                return;
+            }
+
+            // Construct the full file path
+            std::string filepath = std::string(homeDir) + "/.poke327/pokedex/pokedex/data/csv/" + filename;
+
+            std::ifstream file(filepath);
+
+            if (!file.is_open()) {
+                std::cerr << "Error opening the file" << std::endl;
+                return; // Return early if the file can't be opened.
+            }
+
+        std::string header;
+        if (std::getline(file, header)) {
+            std::cout << header << std::endl;
+        }
+
+        std::string line;
+        while (std::getline(file, line)) {
+            std::istringstream iss(line);
+            std::string token;
+
+            if (std::getline(iss, token, ','))
+                pokemon_id = std::atoi(token.c_str());
+            if (std::getline(iss, token, ','))
+                stat_id = std::atoi(token.c_str());
+            if (std::getline(iss, token, ','))
+                base_stat = std::atoi(token.c_str());
+            if (std::getline(iss, token, ','))
+                effort = std::atoi(token.c_str());
+
+            std::cout << line << std::endl;
+        }
+
+        file.close();
+    }
+
 };
 
 class PokemonTypes {
@@ -1633,43 +1969,43 @@ public:
     int type_id;
     int slot;
 
-    // void parseAndSavePokemonTypesFile() {
-    //     const char *dbpath = "/share/cs327/pokedex/pokedex/data/csv/";
-    //     const char *filename = "pokemon_types.csv";
+    void parseAndSavePokemonTypesFile() {
+        const char *dbpath = "/share/cs327/pokedex/pokedex/data/csv/";
+        const char *filename = "pokemon_types.csv";
 
-    //     std::string filepath = std::string(dbpath) + filename;
+        std::string filepath = std::string(dbpath) + filename;
 
-    //     std::ifstream file(filepath);
+        std::ifstream file(filepath);
 
-    //     if (!file.is_open()) {
-    //         std::cerr << "Error opening the file" << std::endl;
-    //         return; // Return early if the file can't be opened.
-    //     }
+        if (!file.is_open()) {
+            std::cerr << "Error opening the file" << std::endl;
+            return; // Return early if the file can't be opened.
+        }
 
-    //     std::string header;
-    //     if (std::getline(file, header)) {
-    //         std::cout << header << std::endl;
-    //     }
+        std::string header;
+        if (std::getline(file, header)) {
+            std::cout << header << std::endl;
+        }
 
-    //     std::string line;
-    //     while (std::getline(file, line)) {
-    //         std::istringstream iss(line);
-    //         std::string token;
+        std::string line;
+        while (std::getline(file, line)) {
+            std::istringstream iss(line);
+            std::string token;
 
-    //         if (std::getline(iss, token, ','))
-    //             pokemon_id = std::atoi(token.c_str());
-    //         if (std::getline(iss, token, ','))
-    //             type_id = std::atoi(token.c_str());
-    //         if (std::getline(iss, token, ','))
-    //             slot = std::atoi(token.c_str());
+            if (std::getline(iss, token, ','))
+                pokemon_id = std::atoi(token.c_str());
+            if (std::getline(iss, token, ','))
+                type_id = std::atoi(token.c_str());
+            if (std::getline(iss, token, ','))
+                slot = std::atoi(token.c_str());
 
-    //         std::cout << line << std::endl;
-    //     }
+            std::cout << line << std::endl;
+        }
 
-    //     file.close();
-    // }
+        file.close();
+    }
 
-void parseAndSavePokemonTypesFile() {
+void parseAndSavePokemonTypesHomeFile() {
     const char *filename = "pokemon_types.csv";
 
     // Get the home directory
@@ -1680,7 +2016,7 @@ void parseAndSavePokemonTypesFile() {
     }
 
     // Construct the full file path
-    std::string filepath = std::string(homeDir) + "/.poke327/" + filename;
+    std::string filepath = std::string(homeDir) + "/.poke327/pokedex/pokedex/data/csv/" + filename;
 
     std::ifstream file(filepath);
 
@@ -1724,14 +2060,55 @@ public:
 
 void parseAndPrintTypeNamesFile() {
     const char *dbpath = "/share/cs327/pokedex/pokedex/data/csv/";
-    // int i = (strlen(getenv("HOME")) + strlen("/.poke327/pokedex/pokedex/csv") + 1);
-    // char *prefix = (char *) malloc(i);
-    // strcpy(prefix, getenv("HOME"));
-    // strcat(prefix, "/.poke327/pokedex/pokedex/data/csv");
 
     const char *filename = "type_names.csv";
 
     std::string filepath = std::string(dbpath) + filename;
+
+    std::ifstream file(filepath);
+
+    if (!file.is_open()) {
+        std::cerr << "Error opening the file" << std::endl;
+        return; // Return early if the file can't be opened.
+    }
+
+    std::string header;
+    if (std::getline(file, header)) {
+        std::cout << header << std::endl;
+    }
+
+    std::string line;
+    while (std::getline(file, line)) {
+        std::istringstream iss(line);
+        std::string token;
+        TypeNames typeNames;
+
+        if (std::getline(iss, token, ','))
+            typeNames.type_id = std::atoi(token.c_str());
+        if (std::getline(iss, token, ','))
+            typeNames.local_language_id = std::atoi(token.c_str());
+        if (std::getline(iss, token, ','))
+            typeNames.name = token;
+    
+
+        std::cout << line << std::endl;
+
+    }
+
+    file.close();
+}
+
+void parseAndPrintTypeNamesHomeFile() {
+    const char *filename = "type_names.csv";
+
+    const char *homeDir = getenv("HOME");
+    if (homeDir == nullptr) {
+        std::cerr << "Error: Unable to get the home directory" << std::endl;
+        return;
+    }
+
+    // Construct the full file path
+    std::string filepath = std::string(homeDir) + "/.poke327/pokedex/pokedex/data/csv/" + filename;
 
     std::ifstream file(filepath);
 
@@ -1795,28 +2172,144 @@ int main(int argc, char* argv[]) {
 
     std::string input(argv[1]);
 
+
+
     if (input == "stats") {
-        parseAndPrintStatsFile();
+        const char *dbpath = "/share/cs327/pokedex/pokedex/data/csv/";
+        const char *filename = "stats.csv";
+
+        std::string filepath = std::string(dbpath) + filename;
+
+        std::ifstream file(filepath);
+
+        if (!file.is_open()) {
+           parseAndPrintStatsHomeFile();
+        }else{
+              parseAndPrintStatsFile();
+        }
+
+
     } else if (input == "pokemon") {
-        parseAndPrintPokemonFile();
+         const char *dbpath = "/share/cs327/pokedex/pokedex/data/csv/";
+        const char *filename = "pokemon.csv";
+
+        std::string filepath = std::string(dbpath) + filename;
+
+        std::ifstream file(filepath);
+
+        if (!file.is_open()) {
+           parseAndPrintPokemonHomeFile();
+        }else{
+            parseAndPrintPokemonFile();
+        }
+
+
     } else if (input == "moves") {
-        parseAndPrintMovesFile();
+        const char *dbpath = "/share/cs327/pokedex/pokedex/data/csv/";
+        const char *filename = "moves.csv";
+
+        std::string filepath = std::string(dbpath) + filename;
+
+        std::ifstream file(filepath);
+
+        if (!file.is_open()) {
+            parseAndPrintMovesHomeFile();
+        }else{
+               parseAndPrintMovesFile();
+        }
+       
     } else if (input == "pokemon_moves") {
         PokemonMoves pokeMoves;
-        pokeMoves.parseAndPrintPokemonMovesFile();
+        const char *dbpath = "/share/cs327/pokedex/pokedex/data/csv/";
+        const char *filename = "pokemon_moves.csv";
+
+        std::string filepath = std::string(dbpath) + filename;
+
+        std::ifstream file(filepath);
+
+        if (!file.is_open()) {
+            pokeMoves.parseAndPrintPokemonMovesHomeFile();
+        }else{
+              pokeMoves.parseAndPrintPokemonMovesFile();
+        }
+        
+
     } else if (input == "pokemon_species") {
-        parseAndPrintPokemonSpeciesFile();
+        const char *dbpath = "/share/cs327/pokedex/pokedex/data/csv/";
+        const char *filename = "pokemon_species.csv";
+
+        std::string filepath = std::string(dbpath) + filename;
+
+        std::ifstream file(filepath);
+
+        if (!file.is_open()) {
+            parseAndPrintPokemonSpeciesHomeFile();
+        }else{
+            parseAndPrintPokemonSpeciesFile();
+        }
+
     } else if (input == "experience") {
         Experience experience;
-        experience.parseAndPrintExperienceFile();
+
+        const char *dbpath = "/share/cs327/pokedex/pokedex/data/csv/";
+        const char *filename = "experience.csv";
+
+        std::string filepath = std::string(dbpath) + filename;
+
+        std::ifstream file(filepath);
+
+        if (!file.is_open()) {
+             experience.parseAndPrintExperienceHomeFile();
+        }else{
+            experience.parseAndPrintExperienceFile();
+        }
+
+
     } else if (input == "pokemon_stats") {
         PokemonStats stats;
-        stats.parseAndSavePokemonStatsFile();
+         const char *dbpath = "/share/cs327/pokedex/pokedex/data/csv/";
+        const char *filename = "pokemon_stats.csv";
+
+        std::string filepath = std::string(dbpath) + filename;
+
+        std::ifstream file(filepath);
+
+        if (!file.is_open()) {
+           stats.parseAndSavePokemonStatsHomeFile();
+        }else{
+            stats.parseAndSavePokemonStatsFile();
+        }
+
     } else if (input == "pokemon_types") {
         PokemonTypes pokeTypes;
-        pokeTypes.parseAndSavePokemonTypesFile();
+        const char *dbpath = "/share/cs327/pokedex/pokedex/data/csv/";
+        const char *filename = "pokemon_types.csv";
+
+        std::string filepath = std::string(dbpath) + filename;
+
+        std::ifstream file(filepath);
+
+        if (!file.is_open()) {
+            pokeTypes.parseAndSavePokemonTypesHomeFile();
+        }else{
+            pokeTypes.parseAndSavePokemonTypesFile();
+        }
+
+
     } else if (input == "type_names") {
-        parseAndPrintTypeNamesFile();
+        const char *dbpath = "/share/cs327/pokedex/pokedex/data/csv/";
+        const char *filename = "type_names.csv";
+
+        std::string filepath = std::string(dbpath) + filename;
+
+        std::ifstream file(filepath);
+
+        if (!file.is_open()) {
+             parseAndPrintTypeNamesHomeFile();
+        }else{
+             parseAndPrintTypeNamesFile();
+        }
+
     } else {
         std::cout << "Invalid  name: " << input << std::endl;
         return 1;
