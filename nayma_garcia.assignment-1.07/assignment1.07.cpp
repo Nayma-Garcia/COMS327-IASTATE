@@ -1199,7 +1199,7 @@ void parseAndPrintStatsHomeFile() {
     std::ifstream file(filepath);
 
     if (!file.is_open()) {
-        std::cerr << "Error opening the file" << std::endl;
+        std::cerr << "Error: Database not found" << std::endl;
         return; // Return early if the file can't be opened.
     }
 
@@ -1309,7 +1309,7 @@ void parseAndPrintPokemonHomeFile() {
     std::ifstream file(filepath);
 
     if (!file.is_open()) {
-        std::cerr << "Error opening the file" << std::endl;
+        std::cerr << "Error: Database not found" << std::endl;
         return; // Return early if the file can't be opened.
     }
 
@@ -1450,7 +1450,7 @@ void parseAndPrintMovesHomeFile() {
     std::ifstream file(filepath);
 
     if (!file.is_open()) {
-        std::cerr << "Error opening the file" << std::endl;
+        std::cerr << "Error: Database not found" << std::endl;
         return; // Return early if the file can't be opened.
     }
 
@@ -1565,7 +1565,7 @@ public:
         // Get the home directory
         const char *homeDir = getenv("HOME");
         if (homeDir == nullptr) {
-            std::cerr << "Error: Unable to get the home directory" << std::endl;
+            std::cerr << "Error: Database not found" << std::endl;
             return;
         }
 
@@ -1711,7 +1711,7 @@ void parseAndPrintPokemonSpeciesHomeFile() {
         // Get the home directory
         const char *homeDir = getenv("HOME");
         if (homeDir == nullptr) {
-            std::cerr << "Error: Unable to get the home directory" << std::endl;
+            std::cerr << "Error: Database not found" << std::endl;
             return;
         }
 
@@ -1833,7 +1833,7 @@ void parseAndPrintExperienceFile() {
 
     const char *homeDir = getenv("HOME");
         if (homeDir == nullptr) {
-            std::cerr << "Error: Unable to get the home directory" << std::endl;
+            std::cerr << "Error: Database not found" << std::endl;
             return;
         }
 
@@ -1922,7 +1922,7 @@ void parseAndSavePokemonStatsHomeFile() {
         
         const char *homeDir = getenv("HOME");
             if (homeDir == nullptr) {
-                std::cerr << "Error: Unable to get the home directory" << std::endl;
+                std::cerr << "Error: Database not found" << std::endl;
                 return;
             }
 
@@ -2011,7 +2011,7 @@ void parseAndSavePokemonTypesHomeFile() {
     // Get the home directory
     const char *homeDir = getenv("HOME");
     if (homeDir == nullptr) {
-        std::cerr << "Error: Unable to get the home directory" << std::endl;
+        std::cerr << "Error: Database not found" << std::endl;
         return;
     }
 
@@ -2103,7 +2103,7 @@ void parseAndPrintTypeNamesHomeFile() {
 
     const char *homeDir = getenv("HOME");
     if (homeDir == nullptr) {
-        std::cerr << "Error: Unable to get the home directory" << std::endl;
+        std::cerr << "Error: Database not found" << std::endl;
         return;
     }
 
