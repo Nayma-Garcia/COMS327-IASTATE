@@ -146,6 +146,117 @@ public:
     int direction;
 };
 
+class HikerPokemon {
+public:
+    int level;
+    std::string identifier;
+    int height;
+    int weight;
+
+    int hp;
+    int attack;
+    bool is_shiny;
+    int levelGet;
+};
+
+  std::vector<HikerPokemon> hikerPoke;
+
+  void setPokemonForHiker();
+void printHikerPokemon();
+
+class RivalPokemon {
+public:
+    int level;
+    std::string identifier;
+    int height;
+    int weight;
+
+    int hp;
+    int attack;
+    bool is_shiny;
+    int levelGet;
+};
+
+  std::vector<RivalPokemon> RivalPoke;
+
+  void setPokemonForRival();
+void printRivalPokemon();
+
+class SentriePokemon {
+public:
+    int level;
+    std::string identifier;
+    int height;
+    int weight;
+
+    int hp;
+    int attack;
+    bool is_shiny;
+    int levelGet;
+};
+
+  std::vector<SentriePokemon> SentriePoke;
+
+  void setPokemonForSentrie();
+void printSentriePokemon();
+
+
+class WandererPokemon {
+public:
+    int level;
+    std::string identifier;
+    int height;
+    int weight;
+
+    int hp;
+    int attack;
+    bool is_shiny;
+    int levelGet;
+};
+
+  std::vector<WandererPokemon> WandererPoke;
+
+  void setPokemonForWanderer();
+void printWandererPokemon();
+
+
+class PacerPokemon {
+public:
+    int level;
+    std::string identifier;
+    int height;
+    int weight;
+
+    int hp;
+    int attack;
+    bool is_shiny;
+    int levelGet;
+};
+
+  std::vector<PacerPokemon> PacerPoke;
+
+  void setPokemonForPacer();
+void printPacerPokemon();
+
+
+class ExplorerPokemon {
+public:
+    int level;
+    std::string identifier;
+    int height;
+    int weight;
+
+    int hp;
+    int attack;
+    bool is_shiny;
+    int levelGet;
+};
+
+  std::vector<ExplorerPokemon> ExplorerPoke;
+
+  void setPokemonForExplorer();
+void printExplorerPokemon();
+
 // Declare global instances
 Hiker hiker;
 PC pc;
@@ -980,6 +1091,8 @@ void isHikerThere(){
     if(printBattle == 1){
         hasHikerBeenBattled = 1;
         mvprintw(22, 0, "You have entered a battle with a hiker!");
+        setPokemonForHiker();
+         printHikerPokemon();
     }
 
 }
@@ -1013,6 +1126,8 @@ void isRivalThere(){
      if(printBattle == 1){
         hasRivalBeenBattled = 1;
         mvprintw(22, 0, "You have entered a battle with a rival!");
+        setPokemonForRival();
+         printRivalPokemon();
     }
 
 }
@@ -1046,6 +1161,8 @@ void isPacerThere(){
       if(printBattle == 1){
         hasPacerBeenBattled = 1;
         mvprintw(22, 0, "You have entered a battle with a pacer!");
+        setPokemonForPacer();
+         printPacerPokemon();
     }
 
 }
@@ -1079,6 +1196,8 @@ void isWandererThere(){
     if(printBattle == 1){
         hasWandererBeenBattled = 1;
         mvprintw(22, 0, "You have entered a battle with a wanderer!");
+        setPokemonForWanderer();
+         printWandererPokemon();
     }
 
 }
@@ -1112,6 +1231,8 @@ void isSentrieThere(){
       if(printBattle == 1){
         hasSentrieBeenBattled = 1;
         mvprintw(22, 0, "You have entered a battle with a sentrie!");
+        setPokemonForSentrie();
+         printSentriePokemon();
     }
 
 }
@@ -1145,6 +1266,8 @@ void isExplorerThere(){
        if(printBattle == 1){
         hasExplorerBeenBattled = 1;
         mvprintw(22, 0, "You have entered a battle with an Explorer!");
+        setPokemonForExplorer();
+         printExplorerPokemon();
     }
 
 }
@@ -1296,12 +1419,8 @@ public:
         iv_attack = calculateAttack();
 
         // Determine shininess
-        int shinyprob = rand() % 100;
-        if(shinyprob < 2){
-            is_shiny = true;
-        }else{
-            is_shiny = false;
-        }
+         is_shiny = rand() % 8192 == 0;
+    
     }
 };
 
@@ -2258,17 +2377,278 @@ void encounter(Map* map) {
     int randomIndex = std::rand() % pokemonV.size();
     Pokemon randomStat = pokemonV[randomIndex];
 
-    if (encounter <= 100 && map->map[pc.position.y][pc.position.x] == ':') {
+    if (encounter <= 10 && map->map[pc.position.y][pc.position.x] == ':') {
         randomStat.initializeAttributes();
 
-        int pokemonLevel = getPokemonLevelById(randomStat.id);
-        randomStat.levelGet = getPokemonLevelById(randomStat.id);
+        // Calculate Manhattan distance
+        int distanceX = std::abs(currentMapX - 200);
+        int distanceY = std::abs(currentMapY - 200);
+        int manhattanDistance = distanceX + distanceY;
 
+        // Adjust the level based on Manhattan distance
+        int minLevel, maxLevel;
+
+        if (manhattanDistance <= 200) {
+            minLevel = 1;
+            maxLevel = (manhattanDistance > 0) ? manhattanDistance / 2 : 1;
+        } else {
+            minLevel = (manhattanDistance - 200) / 2;
+            maxLevel = 100;
+        }
+
+        // Ensure the calculated levels are within bounds
+        minLevel = std::max(1, minLevel);
+        maxLevel = std::min(100, maxLevel);
+
+        // Set the Pokémon level within the calculated range
+        int pokemonLevel = rand() % (maxLevel - minLevel + 1) + minLevel;
+        randomStat.levelGet = pokemonLevel;
+
+        // Print Pokémon information
         mvprintw(25, 0, "Level %d %s", pokemonLevel, randomStat.identifier.c_str());
-        mvprintw(26, 0, "IVs: HP=%d, Attack=%d", randomStat.iv_hp, randomStat.iv_attack);
+        mvprintw(26, 0, "HP=%d, Attack=%d", randomStat.iv_hp, randomStat.iv_attack);
         mvprintw(27, 0, "Shiny: %s", randomStat.is_shiny ? "Yes" : "No");
+
+        // Print moves based on Pokémon level
+        if (pokemonLevel <= 45) {
+            // Print ONE move
+            int randomMoveIndex = std::rand() % movesV.size();
+            Moves randomMove = movesV[randomMoveIndex];
+            mvprintw(28, 0, "Move: %s", randomMove.identifier.c_str());
+        } else {
+            // Print TWO moves
+            int randomMoveIndex1 = std::rand() % movesV.size();
+            int randomMoveIndex2 = std::rand() % movesV.size();
+            Moves randomMove1 = movesV[randomMoveIndex1];
+            Moves randomMove2 = movesV[randomMoveIndex2];
+            mvprintw(28, 0, "Move 1: %s", randomMove1.identifier.c_str());
+            mvprintw(29, 0, "Move 2: %s", randomMove2.identifier.c_str());
+        }
     }
 }
+
+class PlayerPokemon {
+public:
+    int level;
+    std::string identifier;
+};
+
+  std::vector<PlayerPokemon> pcPoke;
+
+void getThreePokemon() {
+    // Shuffle the pokemonV vector
+    std::random_shuffle(pokemonV.begin(), pokemonV.end());
+
+    // Display information about the first three Pokémon after shuffling
+    for (int i = 0; i < 3; ++i) {
+        Pokemon randomStat = pokemonV[i];
+        //int pokemonLevel = getPokemonLevelById(randomStat.id);
+
+        mvprintw(2 + i * 2, 0, "Pokemon %d", i + 1);
+        mvprintw(3 + i * 2, 0, "Level %d %s", 1, randomStat.identifier.c_str());
+    }
+
+    refresh();
+}
+
+void setPokemonForPC(int choice){
+        if (choice >= 1 && choice <= 3) {
+        // Add the selected Pokemon to the pcPoke vector
+        Pokemon selectedPokemon = pokemonV[choice - 1];
+        int selectedPokemonLevel = getPokemonLevelById(selectedPokemon.id);
+
+        PlayerPokemon pcPokemon;
+        pcPokemon.level = selectedPokemonLevel;
+        pcPokemon.identifier = selectedPokemon.identifier;
+
+        pcPoke.push_back(pcPokemon);
+
+        mvprintw(10, 0, "You selected Pokemon %d: %s", choice, pcPokemon.identifier.c_str());
+    } else {
+        mvprintw(10, 0, "Invalid selection. Please choose 1, 2, or 3.");
+    }
+}
+
+    // {'r', {INT_MAX, INT_MAX, 10, 50, 50, 15, 10, 15, 15, INT_MAX, INT_MAX}},  // rival
+    // {'s', {INT_MAX, INT_MAX, 10, 50, 50, 20, 10, INT_MAX, INT_MAX, INT_MAX, INT_MAX}} , // sentire
+    // {'w', {INT_MAX, INT_MAX, 10, 50, 50, 20, 10, INT_MAX, INT_MAX, INT_MAX, INT_MAX}} , // wanderer
+    // {'p', {INT_MAX, INT_MAX, 10, 50, 50, 20, 10, INT_MAX, INT_MAX, INT_MAX, INT_MAX}} , // pacer
+    // {'e', {INT_MAX, INT_MAX, 10, 50, 50, 20, 10, INT_MAX, INT_MAX, INT_MAX, INT_MAX}}  // explorer
+
+
+
+void setPokemonForHiker(){
+        // Add the selected Pokemon to the hikerPoke vector
+        int randomIndex = std::rand() % pokemonV.size();
+        Pokemon randomPokemon = pokemonV[randomIndex];
+        int selectedPokemonLevel = getPokemonLevelById(randomPokemon.id);
+
+        HikerPokemon hikerPokemon;
+        hikerPokemon.level = selectedPokemonLevel;
+        hikerPokemon.identifier = randomPokemon.identifier;
+        hikerPokemon.height = randomPokemon.height;
+        hikerPokemon.weight = randomPokemon.weight;
+        hikerPokemon.levelGet = selectedPokemonLevel;
+        hikerPokemon.hp = randomPokemon.iv_hp;
+        hikerPokemon.attack = randomPokemon.iv_attack;
+        hikerPokemon.is_shiny = randomPokemon.is_shiny;
+
+        hikerPoke.push_back(hikerPokemon);
+}
+
+void printHikerPokemon() {
+    // Print each HikerPokemon
+        mvprintw(25, 0, "Hiker's Pokemon Stats");
+        mvprintw(26, 0, "Level %d %s", hikerPoke[0].level, hikerPoke[0].identifier.c_str());
+        mvprintw(27, 0, "Height=%d, Weight=%d", hikerPoke[0].height, hikerPoke[0].weight);
+        mvprintw(28, 0, "Shiny: %s", hikerPoke[0].is_shiny ? "Yes" : "No");
+    refresh();
+}
+
+
+void setPokemonForRival(){
+        // Add the selected Pokemon to the RivalPoke vector
+        int randomIndex = std::rand() % pokemonV.size();
+        Pokemon randomPokemon = pokemonV[randomIndex];
+        int selectedPokemonLevel = getPokemonLevelById(randomPokemon.id);
+
+        RivalPokemon RivalPokemon;
+        RivalPokemon.level = selectedPokemonLevel;
+        RivalPokemon.identifier = randomPokemon.identifier;
+        RivalPokemon.height = randomPokemon.height;
+        RivalPokemon.weight = randomPokemon.weight;
+        RivalPokemon.levelGet = selectedPokemonLevel;
+        RivalPokemon.hp = randomPokemon.iv_hp;
+        RivalPokemon.attack = randomPokemon.iv_attack;
+        RivalPokemon.is_shiny = randomPokemon.is_shiny;
+
+        RivalPoke.push_back(RivalPokemon);
+}
+
+void printRivalPokemon() {
+    // Print each RivalPokemon
+        mvprintw(25, 0, "Rival's Pokemon Stats");
+        mvprintw(26, 0, "Level %d %s", RivalPoke[0].level, RivalPoke[0].identifier.c_str());
+        mvprintw(27, 0, "Height=%d, Weight=%d", RivalPoke[0].height, RivalPoke[0].weight);
+        mvprintw(28, 0, "Shiny: %s", RivalPoke[0].is_shiny ? "Yes" : "No");
+    refresh();
+}
+
+void setPokemonForSentrie(){
+        // Add the selected Pokemon to the SentriePoke vector
+        int randomIndex = std::rand() % pokemonV.size();
+        Pokemon randomPokemon = pokemonV[randomIndex];
+        int selectedPokemonLevel = getPokemonLevelById(randomPokemon.id);
+
+        SentriePokemon SentriePokemon;
+        SentriePokemon.level = selectedPokemonLevel;
+        SentriePokemon.identifier = randomPokemon.identifier;
+        SentriePokemon.height = randomPokemon.height;
+        SentriePokemon.weight = randomPokemon.weight;
+        SentriePokemon.levelGet = selectedPokemonLevel;
+        SentriePokemon.hp = randomPokemon.iv_hp;
+        SentriePokemon.attack = randomPokemon.iv_attack;
+        SentriePokemon.is_shiny = randomPokemon.is_shiny;
+
+        SentriePoke.push_back(SentriePokemon);
+}
+
+void printSentriePokemon() {
+    // Print each SentriePokemon
+        mvprintw(25, 0, "Sentrie's Pokemon Stats");
+        mvprintw(26, 0, "Level %d %s", SentriePoke[0].level, SentriePoke[0].identifier.c_str());
+        mvprintw(27, 0, "Height=%d, Weight=%d", SentriePoke[0].height, SentriePoke[0].weight);
+        mvprintw(28, 0, "Shiny: %s", SentriePoke[0].is_shiny ? "Yes" : "No");
+    refresh();
+}
+
+
+void setPokemonForWanderer(){
+        // Add the selected Pokemon to the WandererPoke vector
+        int randomIndex = std::rand() % pokemonV.size();
+        Pokemon randomPokemon = pokemonV[randomIndex];
+        int selectedPokemonLevel = getPokemonLevelById(randomPokemon.id);
+
+        WandererPokemon WandererPokemon;
+        WandererPokemon.level = selectedPokemonLevel;
+        WandererPokemon.identifier = randomPokemon.identifier;
+        WandererPokemon.height = randomPokemon.height;
+        WandererPokemon.weight = randomPokemon.weight;
+        WandererPokemon.levelGet = selectedPokemonLevel;
+        WandererPokemon.hp = randomPokemon.iv_hp;
+        WandererPokemon.attack = randomPokemon.iv_attack;
+        WandererPokemon.is_shiny = randomPokemon.is_shiny;
+
+        WandererPoke.push_back(WandererPokemon);
+}
+
+void printWandererPokemon() {
+    // Print each WandererPokemon
+        mvprintw(25, 0, "Wanderer's Pokemon Stats");
+        mvprintw(26, 0, "Level %d %s", WandererPoke[0].level, WandererPoke[0].identifier.c_str());
+        mvprintw(27, 0, "Height=%d, Weight=%d", WandererPoke[0].height, WandererPoke[0].weight);
+        mvprintw(28, 0, "Shiny: %s", WandererPoke[0].is_shiny ? "Yes" : "No");
+    refresh();
+}
+
+
+void setPokemonForPacer(){
+        // Add the selected Pokemon to the PacerPoke vector
+        int randomIndex = std::rand() % pokemonV.size();
+        Pokemon randomPokemon = pokemonV[randomIndex];
+        int selectedPokemonLevel = getPokemonLevelById(randomPokemon.id);
+
+        PacerPokemon PacerPokemon;
+        PacerPokemon.level = selectedPokemonLevel;
+        PacerPokemon.identifier = randomPokemon.identifier;
+        PacerPokemon.height = randomPokemon.height;
+        PacerPokemon.weight = randomPokemon.weight;
+        PacerPokemon.levelGet = selectedPokemonLevel;
+        PacerPokemon.hp = randomPokemon.iv_hp;
+        PacerPokemon.attack = randomPokemon.iv_attack;
+        PacerPokemon.is_shiny = randomPokemon.is_shiny;
+
+        PacerPoke.push_back(PacerPokemon);
+}
+
+void printPacerPokemon() {
+    // Print each PacerPokemon
+        mvprintw(25, 0, "Pacer's Pokemon Stats");
+        mvprintw(26, 0, "Level %d %s", PacerPoke[0].level, PacerPoke[0].identifier.c_str());
+        mvprintw(27, 0, "Height=%d, Weight=%d", PacerPoke[0].height, PacerPoke[0].weight);
+        mvprintw(28, 0, "Shiny: %s", PacerPoke[0].is_shiny ? "Yes" : "No");
+    refresh();
+}
+
+void setPokemonForExplorer(){
+        // Add the selected Pokemon to the ExplorerPoke vector
+        int randomIndex = std::rand() % pokemonV.size();
+        Pokemon randomPokemon = pokemonV[randomIndex];
+        int selectedPokemonLevel = getPokemonLevelById(randomPokemon.id);
+
+        ExplorerPokemon ExplorerPokemon;
+        ExplorerPokemon.level = selectedPokemonLevel;
+        ExplorerPokemon.identifier = randomPokemon.identifier;
+        ExplorerPokemon.height = randomPokemon.height;
+        ExplorerPokemon.weight = randomPokemon.weight;
+        ExplorerPokemon.levelGet = selectedPokemonLevel;
+        ExplorerPokemon.hp = randomPokemon.iv_hp;
+        ExplorerPokemon.attack = randomPokemon.iv_attack;
+        ExplorerPokemon.is_shiny = randomPokemon.is_shiny;
+
+        ExplorerPoke.push_back(ExplorerPokemon);
+}
+
+void printExplorerPokemon() {
+    // Print each ExplorerPokemon
+        mvprintw(25, 0, "Explorer's Pokemon Stats");
+        mvprintw(26, 0, "Level %d %s", ExplorerPoke[0].level, ExplorerPoke[0].identifier.c_str());
+        mvprintw(27, 0, "Height=%d, Weight=%d", ExplorerPoke[0].height, ExplorerPoke[0].weight);
+        mvprintw(28, 0, "Shiny: %s", ExplorerPoke[0].is_shiny ? "Yes" : "No");
+    refresh();
+}
+
+
 
 
 //FOR TESTING IGNORE
@@ -2396,12 +2776,42 @@ int main(int argc, char* argv[]) {
     noecho();
     keypad(stdscr, TRUE);
     nodelay(stdscr, TRUE);
+    bool isPokemonSelected = false; 
 
     start_color();
     init_pair(PLAYER_PAIR, COLOR_RED, COLOR_BLACK);
 
     srand(time(NULL));
-    mvprintw(1, 0, "Loading World...");
+
+  getThreePokemon();
+    refresh();
+
+    while (!isPokemonSelected) {
+         mvprintw(1, 0, "Select a Pokemon");
+        int userInput = getch();  // Get user input
+
+        switch (userInput) {
+            case '1':
+                // Handle selection for Pokemon 1
+                setPokemonForPC(1);
+                isPokemonSelected = true;
+                break;
+
+            case '2':
+                // Handle selection for Pokemon 2
+                setPokemonForPC(2);
+                isPokemonSelected = true;
+                break;
+
+            case '3':
+                // Handle selection for Pokemon 3
+                setPokemonForPC(3);
+                isPokemonSelected = true;
+                break;
+        }
+    }
+    
+    mvprintw(11, 0, "Now Loading World...");
     refresh();
 
     Map (*map)[MAPSY] = (Map (*)[MAPSY])malloc(MAPSX * sizeof(Map[MAPSY]));
