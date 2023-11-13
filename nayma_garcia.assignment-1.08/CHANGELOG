@@ -1,0 +1,8 @@
+11/07
+    2:40pm: Started creating the files & folders for this assignment, also started working on encountering the pokemon in tall grass.
+11/09
+    3:00PM: Got all the encountering stuff done, now just need to add the functionaloty that only prints pokemon of a certain level based on their manhatten distance. Had some issues with this at first but got it figured out
+
+11/12
+	10:00pm: I worked on getting everything regarding if pokemons are shiny and their levels and all that
+    12:20am: Made new classes and stuff to hold the NPC's pokemon, i also created function to display their pokemon stats

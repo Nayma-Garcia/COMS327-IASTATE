@@ -1,0 +1,9 @@
+ ## WHAT THE PROGRAM DOES
+ 
+ This program allows the user to at first choose a pokemon to have. It then also allows the user to encounter pokemon in the tall grass. It also gives NPC's pokemon, which their information is displays in the battle screen
+
+ ## WHEN RUNNING
+
+ There is a small delay when you first compile the program since it is generating, it will compile though
+ ## ALSO
+Once the map appears, please wait about 5 seconds before entering any input (its still trying to catch up a little). After you wait those 5 seconds though everything should work fine
