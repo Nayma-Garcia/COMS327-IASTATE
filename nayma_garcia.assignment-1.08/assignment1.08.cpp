@@ -11,6 +11,9 @@
 #include <string>
 #include <vector>
 #include <sstream>
+#include <algorithm>
+#include <random>
+#include <cmath>
 
 #define MAPSX 401
 #define MAPSY 401
@@ -403,21 +406,46 @@ void generateTerrain(Map *map) {
 
     for (int i = 0; i < numTerrainTypes; i++) {
         TerrainType terrainType = terrainTypes[i];
-        int x, y;
 
-        do {
-            x = getRandom(1, WIDTH - terrainType.maxWidth - 1);
-            y = getRandom(1, LENGTH - terrainType.maxHeight - 1);
-        } while (isPathThere('#', x, y, terrainType.maxWidth, terrainType.maxHeight, map));
+        if (terrainType.terrainChar == ':') {  // Check if tall grass
+            for (int j = 0; j < 5; j++) {  // Adjust the number of tall grass regions
+                int x, y;
+                do {
+                    x = getRandom(1, WIDTH - terrainType.maxWidth - 1);
+                    y = getRandom(1, LENGTH - terrainType.maxHeight - 1);
+                } while (isPathThere('#', x, y, terrainType.maxWidth, terrainType.maxHeight, map));
 
-        for (int ty = y; ty < y + terrainType.maxHeight; ty++) {
-            for (int tx = x; tx < x + terrainType.maxWidth; tx++) {
-                map->map[ty][tx] = terrainType.terrainChar;
+                for (int ty = y; ty < y + terrainType.maxHeight; ty++) {
+                    for (int tx = x; tx < x + terrainType.maxWidth; tx++) {
+                        map->map[ty][tx] = terrainType.terrainChar;
+                    }
+                }
             }
         }
     }
+
+    // Then, generate other terrains
+    for (int i = 0; i < numTerrainTypes; i++) {
+        TerrainType terrainType = terrainTypes[i];
+
+        if (terrainType.terrainChar != ':') {  // Skip tall grass
+            int x, y;
+            do {
+                x = getRandom(1, WIDTH - terrainType.maxWidth - 1);
+                y = getRandom(1, LENGTH - terrainType.maxHeight - 1);
+            } while (isPathThere('#', x, y, terrainType.maxWidth, terrainType.maxHeight, map));
+
+            for (int ty = y; ty < y + terrainType.maxHeight; ty++) {
+                for (int tx = x; tx < x + terrainType.maxWidth; tx++) {
+                    map->map[ty][tx] = terrainType.terrainChar;
+                }
+            }
+        }
+    }
+
     refresh();
 }
+
 
 int getRandom(int min, int max) {
     return min + rand() % (max - min + 1);
@@ -1243,6 +1271,38 @@ public:
     int base_experience;
     int order;
     int is_default;
+
+    int iv_hp;
+    int iv_attack;
+    bool is_shiny;
+    int levelGet;
+
+    // Initialization function
+
+    int calculateHP(){
+         int iv = rand() % 8192 == 0;
+        int HP = std::floor(((base_experience + iv) * 2 * levelGet) / 100) + 1 + 10;
+        return HP;
+    }
+      int calculateAttack(){
+         int iv = rand() % 8192 == 0;
+        int attack = std::floor(((base_experience + iv) * 2 * levelGet) / 100) + 5;
+        return attack;
+    }
+
+    void initializeAttributes() {
+        // Generate IVs for HP and Attack in the range [0, 15]
+        iv_hp = calculateHP();
+        iv_attack = calculateAttack();
+
+        // Determine shininess
+        int shinyprob = rand() % 100;
+        if(shinyprob < 2){
+            is_shiny = true;
+        }else{
+            is_shiny = false;
+        }
+    }
 };
 
  std::vector<Pokemon> pokemonV;
@@ -1259,12 +1319,6 @@ void parseAndPrintPokemonFile() {
         std::cerr << "Error opening the file" << std::endl;
         return; // Return early if the file can't be opened.
     }
-
-    // std::string header;
-    // if (std::getline(file, header)) {
-    //     // Print the header line
-    //     std::cout << header << std::endl;
-    // }
 
     std::string line;
     while (std::getline(file, line)) {
@@ -1595,11 +1649,6 @@ public:
             std::cerr << "Error opening the file" << std::endl;
             return; // Return early if the file can't be opened.
         }
-
-        // std::string header;
-        // if (std::getline(file, header)) {
-        //     std::cout << header << std::endl;
-        // }
 
         std::string line;
         while (std::getline(file, line)) {
@@ -2169,11 +2218,6 @@ void parseAndPrintTypeNamesHomeFile() {
         return; // Return early if the file can't be opened.
     }
 
-    // std::string header;
-    // if (std::getline(file, header)) {
-    //     std::cout << header << std::endl;
-    // }
-
     std::string line;
     while (std::getline(file, line)) {
         std::istringstream iss(line);
@@ -2196,16 +2240,36 @@ void parseAndPrintTypeNamesHomeFile() {
     file.close();
 }
 
-void encounter(){
-   int encounter = rand() % 100;
-    int randomIndex = std::rand() % pokemonV.size();
-           Pokemon randomStat = pokemonV[randomIndex];
-           // mvprintw(28, 0, "%d", encounter);  
-             if (encounter <= 100) {  // 10% chance
-                //mvprintw(25, 0, "TESTINGGGG OMG A POKEMON");  
-                 mvprintw(25, 0, "Random Stat: %d, %s, %d, %d, %d, %d, %d, %d", randomStat.id, randomStat.identifier.c_str(), randomStat.species_id, randomStat.height, randomStat.weight, randomStat.base_experience, randomStat.order, randomStat.is_default);
-            }
+int getPokemonLevelById(int pokemonId) {
+    auto it = std::find_if(PokemonMoves::pokeMovesV.begin(), PokemonMoves::pokeMovesV.end(), [pokemonId](const PokemonMoves& moves) {
+        return moves.pokemon_id == pokemonId;
+    });
+
+    if (it != PokemonMoves::pokeMovesV.end()) {
+        return it->level;
+    }
+
+    return 1; 
 }
+
+
+void encounter(Map* map) {
+    int encounter = rand() % 100;
+    int randomIndex = std::rand() % pokemonV.size();
+    Pokemon randomStat = pokemonV[randomIndex];
+
+    if (encounter <= 100 && map->map[pc.position.y][pc.position.x] == ':') {
+        randomStat.initializeAttributes();
+
+        int pokemonLevel = getPokemonLevelById(randomStat.id);
+        randomStat.levelGet = getPokemonLevelById(randomStat.id);
+
+        mvprintw(25, 0, "Level %d %s", pokemonLevel, randomStat.identifier.c_str());
+        mvprintw(26, 0, "IVs: HP=%d, Attack=%d", randomStat.iv_hp, randomStat.iv_attack);
+        mvprintw(27, 0, "Shiny: %s", randomStat.is_shiny ? "Yes" : "No");
+    }
+}
+
 
 //FOR TESTING IGNORE
 void setNewXforPC(int x){
@@ -2336,7 +2400,6 @@ int main(int argc, char* argv[]) {
     start_color();
     init_pair(PLAYER_PAIR, COLOR_RED, COLOR_BLACK);
 
-
     srand(time(NULL));
     mvprintw(1, 0, "Loading World...");
     refresh();
@@ -2385,7 +2448,7 @@ int main(int argc, char* argv[]) {
             fflush(stdout);
             usleep(50000);
             printMap(&map[currentMapX][currentMapY]);
-            encounter();
+            encounter(&map[currentMapX][currentMapY]);
         }else if(move == '8' || move == 'k'){
         updatePCLocation(&map[currentMapX][currentMapY], move);
             updateHikerLocation(&map[currentMapX][currentMapY]);
@@ -2396,7 +2459,7 @@ int main(int argc, char* argv[]) {
             fflush(stdout);
             usleep(50000);
             printMap(&map[currentMapX][currentMapY]);
-            encounter();
+            encounter(&map[currentMapX][currentMapY]);
        }else if(move == '9' || move == 'u'){
        updatePCLocation(&map[currentMapX][currentMapY], move);
             updateHikerLocation(&map[currentMapX][currentMapY]);
@@ -2407,7 +2470,7 @@ int main(int argc, char* argv[]) {
             fflush(stdout);
             usleep(50000);
             printMap(&map[currentMapX][currentMapY]);
-            encounter();
+            encounter(&map[currentMapX][currentMapY]);
        }else if(move =='6' || move == 'l'){
         updatePCLocation(&map[currentMapX][currentMapY], move);
             updateHikerLocation(&map[currentMapX][currentMapY]);
@@ -2418,7 +2481,7 @@ int main(int argc, char* argv[]) {
             fflush(stdout);
             usleep(50000);
             printMap(&map[currentMapX][currentMapY]);
-            encounter();
+            encounter(&map[currentMapX][currentMapY]);
        }else if(move =='3' || move == 'n'){
        updatePCLocation(&map[currentMapX][currentMapY], move);
             updateHikerLocation(&map[currentMapX][currentMapY]);
@@ -2429,7 +2492,7 @@ int main(int argc, char* argv[]) {
             fflush(stdout);
             usleep(50000);
             printMap(&map[currentMapX][currentMapY]);
-            encounter();
+            encounter(&map[currentMapX][currentMapY]);
        }else if(move =='2' || move == 'j'){
         updatePCLocation(&map[currentMapX][currentMapY], move);
             updateHikerLocation(&map[currentMapX][currentMapY]);
@@ -2440,7 +2503,7 @@ int main(int argc, char* argv[]) {
             fflush(stdout);
             usleep(50000);
             printMap(&map[currentMapX][currentMapY]);
-            encounter();
+            encounter(&map[currentMapX][currentMapY]);
        }else if(move =='1' || move == 'b'){
         updatePCLocation(&map[currentMapX][currentMapY], move);
             updateHikerLocation(&map[currentMapX][currentMapY]);
@@ -2451,7 +2514,7 @@ int main(int argc, char* argv[]) {
             fflush(stdout);
             usleep(50000);
             printMap(&map[currentMapX][currentMapY]);
-            encounter();
+            encounter(&map[currentMapX][currentMapY]);
        }else if(move =='4' || move == 'h'){
             updatePCLocation(&map[currentMapX][currentMapY], move);
             updateHikerLocation(&map[currentMapX][currentMapY]);
@@ -2462,7 +2525,7 @@ int main(int argc, char* argv[]) {
             fflush(stdout);
             usleep(50000);
             printMap(&map[currentMapX][currentMapY]);
-            encounter();
+            encounter(&map[currentMapX][currentMapY]);
        }else if(move == '5' || move =='.' || move == ' '){
             updatePCLocation(&map[currentMapX][currentMapY], move);
             updateHikerLocation(&map[currentMapX][currentMapY]);
@@ -2473,7 +2536,7 @@ int main(int argc, char* argv[]) {
             fflush(stdout);
             usleep(50000);
             printMap(&map[currentMapX][currentMapY]);
-            encounter();
+            encounter(&map[currentMapX][currentMapY]);
        }else if(move =='t'){
           fflush(stdout);
           usleep(50000);
