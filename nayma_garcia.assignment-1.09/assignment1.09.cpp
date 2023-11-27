@@ -1090,9 +1090,10 @@ void isHikerThere(){
 
     if(printBattle == 1){
         hasHikerBeenBattled = 1;
-        mvprintw(22, 0, "You have entered a battle with a hiker!");
         setPokemonForHiker();
-         printHikerPokemon();
+        mvprintw(22, 0, "You have entered a battle with a hiker!");
+        trainerBattle(1, "hiker");
+       
     }
 
 }
@@ -1125,9 +1126,9 @@ void isRivalThere(){
 
      if(printBattle == 1){
         hasRivalBeenBattled = 1;
+        setPokemonForrival();
         mvprintw(22, 0, "You have entered a battle with a rival!");
-        setPokemonForRival();
-         printRivalPokemon();
+        trainerBattle(1, "rival");
     }
 
 }
@@ -1160,9 +1161,9 @@ void isPacerThere(){
 
       if(printBattle == 1){
         hasPacerBeenBattled = 1;
+        setPokemonForpacer();
         mvprintw(22, 0, "You have entered a battle with a pacer!");
-        setPokemonForPacer();
-         printPacerPokemon();
+        trainerBattle(1, "pacer");
     }
 
 }
@@ -1195,9 +1196,9 @@ void isWandererThere(){
 
     if(printBattle == 1){
         hasWandererBeenBattled = 1;
+        setPokemonForwanderer();
         mvprintw(22, 0, "You have entered a battle with a wanderer!");
-        setPokemonForWanderer();
-         printWandererPokemon();
+        trainerBattle(1, "wanderer");
     }
 
 }
@@ -1230,9 +1231,9 @@ void isSentrieThere(){
 
       if(printBattle == 1){
         hasSentrieBeenBattled = 1;
+        setPokemonForsentrie();
         mvprintw(22, 0, "You have entered a battle with a sentrie!");
-        setPokemonForSentrie();
-         printSentriePokemon();
+        trainerBattle(1, "sentrie");
     }
 
 }
@@ -1265,9 +1266,9 @@ void isExplorerThere(){
 
        if(printBattle == 1){
         hasExplorerBeenBattled = 1;
-        mvprintw(22, 0, "You have entered a battle with an Explorer!");
-        setPokemonForExplorer();
-         printExplorerPokemon();
+        setPokemonForexplorer();
+        mvprintw(22, 0, "You have entered a battle with a explorer!");
+        trainerBattle(1, "explorer");
     }
 
 }
@@ -1788,7 +1789,6 @@ public:
             if (std::getline(iss, token, ','))
                 pokeMoves.order = std::atoi(token.c_str());
             
-
             // std::cout << line << std::endl;
              pokeMovesV.push_back(pokeMoves);
 
@@ -2371,6 +2371,284 @@ int getPokemonLevelById(int pokemonId) {
     return 1; 
 }
 
+//---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+class PlayerPokemon {
+public:
+    int level;
+    std::string identifier;
+    int hp;
+    int attack;
+    bool shiny;
+};
+
+  std::vector<PlayerPokemon> pcPoke;
+
+void getThreePokemon() {
+    // Shuffle the pokemonV vector
+    std::random_shuffle(pokemonV.begin(), pokemonV.end());
+
+    // Display information about the first three Pokémon after shuffling
+    for (int i = 0; i < 3; ++i) {
+        Pokemon randomStat = pokemonV[i];
+        //int pokemonLevel = getPokemonLevelById(randomStat.id);
+
+        mvprintw(2 + i * 2, 0, "Pokemon %d", i + 1);
+        mvprintw(3 + i * 2, 0, "Level %d %s", 1, randomStat.identifier.c_str());
+    }
+
+    refresh();
+}
+
+void setPokemonForPC(int choice){
+        if (choice >= 1 && choice <= 3) {
+        // Add the selected Pokemon to the pcPoke vector
+        Pokemon selectedPokemon = pokemonV[choice - 1];
+       // int selectedPokemonLevel = getPokemonLevelById(selectedPokemon.id);
+       selectedPokemon.initializeAttributes();
+
+        PlayerPokemon pcPokemon;
+        pcPokemon.level = 1;
+        pcPokemon.identifier = selectedPokemon.identifier;
+        pcPokemon.hp = selectedPokemon.iv_hp;
+        pcPokemon.attack = selectedPokemon.iv_attack;
+        pcPokemon.shiny = selectedPokemon.is_shiny;
+        pcPoke.push_back(pcPokemon);
+
+        mvprintw(10, 0, "You selected Pokemon %d: %s", choice, pcPokemon.identifier.c_str());
+    } else {
+        mvprintw(10, 0, "Invalid selection. Please choose 1, 2, or 3.");
+    }
+}
+
+int pokemonInPoket = 1;
+
+void addCapturedPokemon(int level, int hp, int attack, const char* name, const char* move1, const char* move2, bool isShiny) {
+    if (pcPoke.size() < 6) {
+        PlayerPokemon pcPokemon;
+        pcPokemon.level = level;
+        pcPokemon.identifier = name;
+        pcPokemon.hp = hp;
+        pcPokemon.attack = attack;
+        pcPokemon.shiny = isShiny;
+        pcPoke.push_back(pcPokemon);
+        mvprintw(23, 0, "Pokemon has been captured");
+    } else {
+        mvprintw(23, 0, "You've reached the limit of 6 pokemon, cannot capture");
+    }
+}
+
+        trainerBattle(int isTrainer, const char *trainerName){
+            //hiker
+            int randomMoveIndex1 = std::rand() % movesV.size();
+            int randomMoveIndex2 = std::rand() % movesV.size();
+            Moves randomHikeMove1 = movesV[randomMoveIndex1];
+            Moves randomHikeMove2 = movesV[randomMoveIndex2];
+
+            const char* randomMove1 = randomHikeMove1.identifier.c_str();
+            const char* randomMove2 = randomHikeMove2.identifier.c_str();
+            int randomHp = std::rand() % 26 + 12;
+             int randomattack = std::rand() % 26 + 12;
+
+            pokeBattle(pokemonLevel, randomHp, randomattack, trainerName, randomMove1.identifier.c_str(), randomMove2.identifier.c_str(), randomStat.is_shiny, randomMove1.power, 1);
+
+
+        }
+
+
+
+
+
+void clearBattleArena(){
+  int startY = 0;  
+    int endY = 21;   
+    int startX = 0;  
+    int endX = 81;    
+
+    for (int y = startY; y <= endY; y++) {
+        for (int x = startX; x <= endX; x++) {
+            mvprintw(y, x, " "); 
+        }
+    }
+}
+
+void makeArenaBorder(){
+      int startY = 0;  
+    int endY = 21;   
+    int startX = 0;  
+    int endX = 81;   
+    for (int y = startY; y <= endY; ++y) {
+        for (int x = startX; x <= endX; ++x) {
+            // Check if it's a border position
+            if (y == startY || y == endY || x == startX || x == endX) {
+                mvprintw(y, x, "+");
+            }
+        }
+    }
+}
+
+int currentFighter;
+
+void setcurrentFighter(int fighterCurrent){
+    currentFighter = fighterCurrent;
+}
+
+//POKEMON BATTLE CODE------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+void pokeBattle(int level, int hp, int attack, const char* name,  const char*  move1, const char*  move2, bool  isShiny, int opPower, int isTrainer){
+   clearBattleArena();
+     makeArenaBorder();
+       int randomMoveIndex1 = std::rand() % movesV.size();
+       int randomMoveIndex2 = std::rand() % movesV.size();
+       Moves randomMove1 = movesV[randomMoveIndex1];
+       Moves randomMove2 = movesV[randomMoveIndex2];
+       int rawPower = randomMove1.power;
+
+       //int accuracy = randomMove1.accuracy;
+
+        mvprintw(13, 3, "YOU:");
+        mvprintw(14, 3, "Level %d %s", pcPoke[0].level, pcPoke[0].identifier.c_str());
+        mvprintw(15, 3, "HP=%d, Attack=%d", pcPoke[0].hp, pcPoke[0].attack);
+        mvprintw(16, 3, "Shiny: %s", pcPoke[0].shiny ? "Yes" : "No");
+        mvprintw(17, 3, "Move: %s", randomMove1.identifier.c_str());
+        // mvprintw(18, 3, "Move: %s", randomMove2.identifier.c_str());
+
+
+       std::string uppercaseName = name;
+        std::transform(uppercaseName.begin(), uppercaseName.end(), uppercaseName.begin(), [](unsigned char c) {
+            return std::toupper(c);
+        });
+
+        mvprintw(3, 60, "%s:", uppercaseName.c_str());
+        mvprintw(4, 60, "Level %d", level);
+        mvprintw(5, 60, "HP=%d, Attack=%d", hp, attack);
+        mvprintw(6, 60, "Shiny: %s", isShiny ? "Yes" : "No");
+        mvprintw(7, 60, "Move: %s", move1);
+
+    if(isTrainer == 0){
+        mvprintw(20, 42, "Fight[a]");
+        mvprintw(20, 52, "Bag[s]");
+        mvprintw(20, 60, "Run[d]");
+        mvprintw(20, 68, "Pokemon[z]");
+    }else if(isTrainer == 1){
+        mvprintw(20, 42, "Fight[a]");
+        mvprintw(20, 52, "Bag[s]");
+        mvprintw(20, 60, "Pokemon[z]");
+    }
+
+
+        //DECIDING WHO STARTS
+        setcurrentFighter(1);
+while(1){
+        int randomNumber;
+        if(currentFighter == 1){
+             randomNumber = std::rand() % 100; 
+             char input;
+             int ch;
+             
+                while (1) {
+                     input = '\0';
+                    while (1) {
+                        // mvprintw(22, 0, "Enter your choice: ");
+                        // refresh();
+
+                        ch = getch();
+                        if (ch == 'a' || ch == 's' || ch == 'd' || ch == 'z') {
+                            input = ch;
+                            printw("%c", ch);
+                            refresh();
+                            break;  // Exit the inner loop after processing input
+                        }
+                    }
+
+                    if (input == 'a') {
+                        mvprintw(22, 0, "                                                            ");
+                        mvprintw(23, 0, "                                                            ");
+                        mvprintw(24, 0, "                                                           ");
+                        mvprintw(22, 0, "YOU USED THE MOVE: %s", randomMove1.identifier.c_str());
+                         int power = rawPower / 10;
+                         if(power == 0){
+                            power = 5;
+                         }
+                        mvprintw(23, 0, "IT HAS A DAMAGE OF %d.", power);
+                        mvprintw(24, 0, "THE ENEMY TOOK %d DAMAGE!", power);
+                        hp = hp - power;
+                        mvprintw(5, 60, "HP=%d, Attack=%d", hp, attack);
+                        setcurrentFighter(2);
+                        break;
+                    } else if (input == 's') {
+                        setcurrentFighter(2);
+                          break;
+                    } else if (input == 'd') {
+                        if(isTrainer == 0){
+                                if (randomNumber < 5) {
+                        mvprintw(22, 0, "                                                            ");
+                        mvprintw(23, 0, "                                                            ");
+                        mvprintw(24, 0, "                                                           ");
+                            mvprintw(2, 0, "RUN SUCCEEDED BYE");
+                            hp = 0;
+                            break;
+                        } else {
+                        mvprintw(22, 0, "                                                            ");
+                        mvprintw(23, 0, "                                                            ");
+                        mvprintw(24, 0, "                                                           ");
+                            mvprintw(2, 0, "RUN FAILED KEEP FIGHTING");
+                        }
+                        setcurrentFighter(2);
+                          break;
+                        }
+                    } else if (input == 'z') {
+                        int startY = 22;  // Adjust the starting y-coordinate as needed
+                        mvprintw(22, 0, "                                                            ");
+                        mvprintw(23, 0, "                                                            ");
+                        mvprintw(24, 0, "                                                           ");
+                        for (size_t i = 0; i < pcPoke.size(); ++i) {
+                            mvprintw(startY + i, 0, pcPoke[i].identifier.c_str());
+                        }
+                        setcurrentFighter(2);
+                          break;
+                    }
+
+                    // Reset input for the next iteration
+                }
+        }else if(currentFighter == 2){
+                        mvprintw(26, 0, "                                                            ");
+                        mvprintw(27, 0, "                                                            ");
+                        mvprintw(28, 0, "                                                           ");
+                        mvprintw(26, 0, "%s USED THE MOVE: %s", name, move1);
+                         int oppPower = opPower / 10;
+                         if(oppPower == 0){
+                            oppPower = 5;
+                         }
+                        mvprintw(27, 0, "IT HAS A DAMAGE OF %d.", oppPower);
+                        mvprintw(28, 0, "YOU TOOK %d DAMAGE!", oppPower);
+                        pcPoke[0].hp = hp - oppPower;
+                        mvprintw(15, 3, "HP=%d, Attack=%d", pcPoke[0].hp, pcPoke[0].attack);
+                        setcurrentFighter(1);
+        }
+        
+        if(hp < 1){
+                        mvprintw(22, 0, "                                                            ");
+                        mvprintw(23, 0, "                                                            ");
+                        mvprintw(24, 0, "                                                           ");
+                        mvprintw(26, 0, "                                                            ");
+                        mvprintw(27, 0, "                                                            ");
+                        mvprintw(28, 0, "                                                           ");
+                        addCapturedPokemon( level,  hp,  attack,  name,  move1,  move2,  isShiny);
+                        mvprintw(11, 20, "ENEMY HAS BEEN DEFEATED AND CAPTURED, PLEASE PRESS '5' TO CONTINUE ");
+            break;
+        }else if( pcPoke[0].hp < 1){
+                        mvprintw(22, 0, "                                                            ");
+                        mvprintw(23, 0, "                                                            ");
+                        mvprintw(24, 0, "                                                           ");
+                        mvprintw(26, 0, "                                                            ");
+                        mvprintw(27, 0, "                                                            ");
+                        mvprintw(28, 0, "                                                           ");
+                        addCapturedPokemon( level,  hp,  attack,  name,  move1,  move2,  isShiny);
+                        mvprintw(22, 0, "YOU HAVE BEEN DEFEATED, PLEASE PRESS '5' TO CONTINUE ");
+            break;
+        }
+              
+    }
+}
 
 void encounter(Map* map) {
     int encounter = rand() % 100;
@@ -2403,71 +2681,19 @@ void encounter(Map* map) {
         // Set the Pokémon level within the calculated range
         int pokemonLevel = rand() % (maxLevel - minLevel + 1) + minLevel;
         randomStat.levelGet = pokemonLevel;
-
-        // Print Pokémon information
-        mvprintw(25, 0, "Level %d %s", pokemonLevel, randomStat.identifier.c_str());
-        mvprintw(26, 0, "HP=%d, Attack=%d", randomStat.iv_hp, randomStat.iv_attack);
-        mvprintw(27, 0, "Shiny: %s", randomStat.is_shiny ? "Yes" : "No");
-
-        // Print moves based on Pokémon level
-        if (pokemonLevel <= 45) {
-            // Print ONE move
-            int randomMoveIndex = std::rand() % movesV.size();
-            Moves randomMove = movesV[randomMoveIndex];
-            mvprintw(28, 0, "Move: %s", randomMove.identifier.c_str());
-        } else {
-            // Print TWO moves
-            int randomMoveIndex1 = std::rand() % movesV.size();
+          int randomMoveIndex1 = std::rand() % movesV.size();
             int randomMoveIndex2 = std::rand() % movesV.size();
             Moves randomMove1 = movesV[randomMoveIndex1];
             Moves randomMove2 = movesV[randomMoveIndex2];
-            mvprintw(28, 0, "Move 1: %s", randomMove1.identifier.c_str());
-            mvprintw(29, 0, "Move 2: %s", randomMove2.identifier.c_str());
-        }
+        
+         //  int level, int hp, int attack, char name[],  char  move1[], char  move2[], char isShiny[]
+            pokeBattle(pokemonLevel, randomStat.iv_hp, randomStat.iv_attack, randomStat.identifier.c_str(), randomMove1.identifier.c_str(), randomMove2.identifier.c_str(), randomStat.is_shiny, randomMove1.power, 0);
     }
+ 
 }
 
-class PlayerPokemon {
-public:
-    int level;
-    std::string identifier;
-};
 
-  std::vector<PlayerPokemon> pcPoke;
 
-void getThreePokemon() {
-    // Shuffle the pokemonV vector
-    std::random_shuffle(pokemonV.begin(), pokemonV.end());
-
-    // Display information about the first three Pokémon after shuffling
-    for (int i = 0; i < 3; ++i) {
-        Pokemon randomStat = pokemonV[i];
-        //int pokemonLevel = getPokemonLevelById(randomStat.id);
-
-        mvprintw(2 + i * 2, 0, "Pokemon %d", i + 1);
-        mvprintw(3 + i * 2, 0, "Level %d %s", 1, randomStat.identifier.c_str());
-    }
-
-    refresh();
-}
-
-void setPokemonForPC(int choice){
-        if (choice >= 1 && choice <= 3) {
-        // Add the selected Pokemon to the pcPoke vector
-        Pokemon selectedPokemon = pokemonV[choice - 1];
-        int selectedPokemonLevel = getPokemonLevelById(selectedPokemon.id);
-
-        PlayerPokemon pcPokemon;
-        pcPokemon.level = selectedPokemonLevel;
-        pcPokemon.identifier = selectedPokemon.identifier;
-
-        pcPoke.push_back(pcPokemon);
-
-        mvprintw(10, 0, "You selected Pokemon %d: %s", choice, pcPokemon.identifier.c_str());
-    } else {
-        mvprintw(10, 0, "Invalid selection. Please choose 1, 2, or 3.");
-    }
-}
 
     // {'r', {INT_MAX, INT_MAX, 10, 50, 50, 15, 10, 15, 15, INT_MAX, INT_MAX}},  // rival
     // {'s', {INT_MAX, INT_MAX, 10, 50, 50, 20, 10, INT_MAX, INT_MAX, INT_MAX, INT_MAX}} , // sentire
@@ -2482,6 +2708,7 @@ void setPokemonForHiker(){
         int randomIndex = std::rand() % pokemonV.size();
         Pokemon randomPokemon = pokemonV[randomIndex];
         int selectedPokemonLevel = getPokemonLevelById(randomPokemon.id);
+        randomPokemon.initializeAttributes();
 
         HikerPokemon hikerPokemon;
         hikerPokemon.level = selectedPokemonLevel;
@@ -2511,6 +2738,7 @@ void setPokemonForRival(){
         int randomIndex = std::rand() % pokemonV.size();
         Pokemon randomPokemon = pokemonV[randomIndex];
         int selectedPokemonLevel = getPokemonLevelById(randomPokemon.id);
+        randomPokemon.initializeAttributes();
 
         RivalPokemon RivalPokemon;
         RivalPokemon.level = selectedPokemonLevel;
@@ -2539,6 +2767,7 @@ void setPokemonForSentrie(){
         int randomIndex = std::rand() % pokemonV.size();
         Pokemon randomPokemon = pokemonV[randomIndex];
         int selectedPokemonLevel = getPokemonLevelById(randomPokemon.id);
+        randomPokemon.initializeAttributes();
 
         SentriePokemon SentriePokemon;
         SentriePokemon.level = selectedPokemonLevel;
@@ -2568,6 +2797,7 @@ void setPokemonForWanderer(){
         int randomIndex = std::rand() % pokemonV.size();
         Pokemon randomPokemon = pokemonV[randomIndex];
         int selectedPokemonLevel = getPokemonLevelById(randomPokemon.id);
+        randomPokemon.initializeAttributes();
 
         WandererPokemon WandererPokemon;
         WandererPokemon.level = selectedPokemonLevel;
@@ -2597,6 +2827,7 @@ void setPokemonForPacer(){
         int randomIndex = std::rand() % pokemonV.size();
         Pokemon randomPokemon = pokemonV[randomIndex];
         int selectedPokemonLevel = getPokemonLevelById(randomPokemon.id);
+        randomPokemon.initializeAttributes();
 
         PacerPokemon PacerPokemon;
         PacerPokemon.level = selectedPokemonLevel;
@@ -2625,6 +2856,7 @@ void setPokemonForExplorer(){
         int randomIndex = std::rand() % pokemonV.size();
         Pokemon randomPokemon = pokemonV[randomIndex];
         int selectedPokemonLevel = getPokemonLevelById(randomPokemon.id);
+        randomPokemon.initializeAttributes();
 
         ExplorerPokemon ExplorerPokemon;
         ExplorerPokemon.level = selectedPokemonLevel;
@@ -2667,7 +2899,6 @@ int getNewXforPC(){
 int getNewYforPC(){
     return newYforPC;
 }
-
 
 int main(int argc, char* argv[]) {
 
