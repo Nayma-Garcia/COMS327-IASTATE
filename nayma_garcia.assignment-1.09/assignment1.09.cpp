@@ -2510,6 +2510,7 @@ int originalhp;
 int currentPokemon;
 int deadPokemon;
 int amountofPoke = pcPoke.size();
+  int battleOver = 0;
 
 void setcurrentFighter(int fighterCurrent){
     currentFighter = fighterCurrent;
@@ -2572,8 +2573,6 @@ while(1){
                 while (1) {
                      input = '\0';
                     while (1) {
-                        // mvprintw(22, 0, "Enter your choice: ");
-                        // refresh();
 
                         ch = getch();
                         if (ch == 'a' || ch == 'b' || ch == 'd' || ch == 'z') {
@@ -2660,12 +2659,12 @@ while(1){
                          }
                         mvprintw(27, 0, "IT HAS A DAMAGE OF %d.", oppPower);
                         mvprintw(28, 0, "YOU TOOK %d DAMAGE!", oppPower);
-                        pcPoke[currentPokemon].hp = hp - oppPower;
-                        if(pcPoke[currentPokemon].hp < 0){
-                            pcPoke[currentPokemon].hp = 0;
-                            currentPokemon +=1;
-                            deadPokemon += 1;
-                        }
+                        // pcPoke[currentPokemon].hp = hp - oppPower;
+                        // if(pcPoke[currentPokemon].hp < 0){
+                        //     pcPoke[currentPokemon].hp = 0;
+                        //     currentPokemon +=1;
+                        //     deadPokemon += 1;
+                        // }
                         mvprintw(15, 3, "HP=%d, Attack=%d", pcPoke[currentPokemon].hp, pcPoke[currentPokemon].attack);
                         setcurrentFighter(1);
         }
@@ -2677,7 +2676,7 @@ while(1){
                         mvprintw(26, 0, "                                                            ");
                         mvprintw(27, 0, "                                                            ");
                         mvprintw(28, 0, "                                                           ");
-                        mvprintw(22, 20, "ENEMY HAS BEEN DEFEATED AND CAPTURED, PLEASE PRESS '5' TO CONTINUE ");
+                        mvprintw(22, 0, "ENEMY HAS BEEN DEFEATED AND CAPTURED, PLEASE PRESS '5' TO CONTINUE ");
                         addCapturedPokemon( level,  hp,  attack,  name,  move1,  move2,  isShiny);
             break;
         }else if(pcPoke[currentPokemon].hp <= 0){
@@ -2689,7 +2688,23 @@ while(1){
                         mvprintw(28, 0, "                                                           ");
                         mvprintw(22, 0, "YOU HAVE BEEN DEFEATED, PLEASE PRESS '5' TO CONTINUE ");
                         addCapturedPokemon( level, hp, attack, name, move1,  move2,  isShiny);
-            break;
+             for(int i = 0; i < amountofPoke; i++){
+                if(pcPoke[i].hp < 0){
+                    deadPokemon += 1;
+                }
+                if(deadPokemon == amountofPoke){
+                    battleOver = 1;
+                }
+            }
+        }else if(battleOver == 1){
+            mvprintw(22, 0, "                                                            ");
+                        mvprintw(23, 0, "                                                            ");
+                        mvprintw(24, 0, "                                                           ");
+                        mvprintw(26, 0, "                                                            ");
+                        mvprintw(27, 0, "                                                            ");
+                        mvprintw(28, 0, "                                                           ");
+                        mvprintw(22, 0, "ALL YOUR POKEMON HAVE BEEN DEFEATED, PLEASE PRESS '5 TO CONTINUE");
+             break;
         }
               
     }
@@ -3245,12 +3260,12 @@ int main(int argc, char* argv[]) {
        }else if(move == '>' && isPConCorM(&map[currentMapX][currentMapY]) == 1){
          mvprintw(22, 0, "Welcome to the PokeCenter, all your pokemon have been healed!");
          //TODO
-         pcPoke[0].hp += 20;
+         pcPoke[currentPokemon].hp = originalhp;
        }else if (move == '>' && isPConCorM(&map[currentMapX][currentMapY]) == 2){
         //TODO
-        pcPoke[0].revives = 5;
-        pcPoke[0].potions = 5;
-        pcPoke[0].pokeballs = 5;
+        pcPoke[currentPokemon].revives = 5;
+        pcPoke[currentPokemon].potions = 5;
+        pcPoke[currentPokemon].pokeballs = 5;
         mvprintw(22, 0, "Welcome to the PokeMart, all the items in your bag have been restored!");
        }else if(move == '<' || move == 27){
             updatePCLocation(&map[currentMapX][currentMapY], move);

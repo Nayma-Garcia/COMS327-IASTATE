@@ -1,0 +1,18 @@
+ ## WHAT THE PROGRAM DOES
+ 
+ This program allows the user to battle wild pokemon and trainers, a new battle screen is implemented where the user and the enemy take turns fighting. 
+ Small disclaime;
+ - it may appear as if the user and enemy are battling at the same time and not in turns but they are taking turns, it is just happening to fast
+
+ ## ISSUES - PLEASE READ
+ I know this is not an excuse for not getting these issues fixed but at the time i am turning this in, pyrite is having a major issue where all of my files are gone so this version of the code is just the last version i was able to push to my github, also my computer broke as i was working on this project and had to try and continue working on it on my friends laptop which took a while to set up, but again, i am now unable to work on it because of the pyrite issue so im going to have to turn in what i have
+
+ Anyways, thank you for understanding, here are the known issues:
+ - Switching to another pokemon, i have the functionality to capture pokemon and open the list of the current pokemon u have, and currently it switches automatically to another pokemon, but you cant choose, and the battle still ends
+ - Also for some reason the battle ends when your inital pokemon dies, i cant figure out why
+
+ ## WHEN RUNNING
+
+ There is a small delay when you first compile the program since it is generating, it will compile though
+ ## ALSO
+Once the map appears, please wait about 5 seconds before entering any input (its still trying to catch up a little). After you wait those 5 seconds though everything should work fine
