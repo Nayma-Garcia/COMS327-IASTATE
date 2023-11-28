@@ -325,6 +325,8 @@ void parseAndPrintPokemonSpeciesFile();
 void parseAndPrintExperienceFile();
 void parseAndPrintPokemonStatsFile();
 void parseAndPrintTypeNamesFile();
+void trainerBattle(int isTrainer, const char *trainerName);
+void setPokemonForHiker();
 
 
 
@@ -1126,7 +1128,7 @@ void isRivalThere(){
 
      if(printBattle == 1){
         hasRivalBeenBattled = 1;
-        setPokemonForrival();
+        setPokemonForRival();
         mvprintw(22, 0, "You have entered a battle with a rival!");
         trainerBattle(1, "rival");
     }
@@ -1161,7 +1163,7 @@ void isPacerThere(){
 
       if(printBattle == 1){
         hasPacerBeenBattled = 1;
-        setPokemonForpacer();
+        setPokemonForPacer();
         mvprintw(22, 0, "You have entered a battle with a pacer!");
         trainerBattle(1, "pacer");
     }
@@ -1196,7 +1198,7 @@ void isWandererThere(){
 
     if(printBattle == 1){
         hasWandererBeenBattled = 1;
-        setPokemonForwanderer();
+        setPokemonForWanderer();
         mvprintw(22, 0, "You have entered a battle with a wanderer!");
         trainerBattle(1, "wanderer");
     }
@@ -1231,7 +1233,7 @@ void isSentrieThere(){
 
       if(printBattle == 1){
         hasSentrieBeenBattled = 1;
-        setPokemonForsentrie();
+        setPokemonForSentrie();
         mvprintw(22, 0, "You have entered a battle with a sentrie!");
         trainerBattle(1, "sentrie");
     }
@@ -1266,7 +1268,7 @@ void isExplorerThere(){
 
        if(printBattle == 1){
         hasExplorerBeenBattled = 1;
-        setPokemonForexplorer();
+        setPokemonForExplorer();
         mvprintw(22, 0, "You have entered a battle with a explorer!");
         trainerBattle(1, "explorer");
     }
@@ -2379,6 +2381,9 @@ public:
     int hp;
     int attack;
     bool shiny;
+    int revives;
+    int potions;
+    int pokeballs;
 };
 
   std::vector<PlayerPokemon> pcPoke;
@@ -2412,6 +2417,9 @@ void setPokemonForPC(int choice){
         pcPokemon.hp = selectedPokemon.iv_hp;
         pcPokemon.attack = selectedPokemon.iv_attack;
         pcPokemon.shiny = selectedPokemon.is_shiny;
+        pcPokemon.revives = 5;
+        pcPokemon.potions = 5;
+        pcPokemon.pokeballs = 5;
         pcPoke.push_back(pcPokemon);
 
         mvprintw(10, 0, "You selected Pokemon %d: %s", choice, pcPokemon.identifier.c_str());
@@ -2436,22 +2444,19 @@ void addCapturedPokemon(int level, int hp, int attack, const char* name, const c
         mvprintw(23, 0, "You've reached the limit of 6 pokemon, cannot capture");
     }
 }
+void pokeBattle(int level, int hp, int attack, const char* name,  const char*  move1, const char*  move2, bool  isShiny, int opPower, int isTrainer);
 
-        trainerBattle(int isTrainer, const char *trainerName){
+       void  trainerBattle(int isTrainer, const char *trainerName){
             //hiker
             int randomMoveIndex1 = std::rand() % movesV.size();
             int randomMoveIndex2 = std::rand() % movesV.size();
             Moves randomHikeMove1 = movesV[randomMoveIndex1];
             Moves randomHikeMove2 = movesV[randomMoveIndex2];
 
-            const char* randomMove1 = randomHikeMove1.identifier.c_str();
-            const char* randomMove2 = randomHikeMove2.identifier.c_str();
             int randomHp = std::rand() % 26 + 12;
              int randomattack = std::rand() % 26 + 12;
 
-            pokeBattle(pokemonLevel, randomHp, randomattack, trainerName, randomMove1.identifier.c_str(), randomMove2.identifier.c_str(), randomStat.is_shiny, randomMove1.power, 1);
-
-
+            pokeBattle(1, randomHp, randomattack, trainerName, randomHikeMove1.identifier.c_str(), randomHikeMove2.identifier.c_str(), false, randomHikeMove1.power, 1);
         }
 
 
@@ -2486,7 +2491,25 @@ void makeArenaBorder(){
     }
 }
 
+// int pokemonDead(){
+//     int count;
+//     int length = pcPoke.size();
+//     for(int i = 0; i < length; ++i){
+//         if(pcPoke[i].hp < 0){
+//             count += 1;
+//         }
+//     }
+//     if(count == length){
+//         return 1;
+//     }
+//     return 0;
+// }
+
 int currentFighter;
+int originalhp;
+int currentPokemon;
+int deadPokemon;
+int amountofPoke = pcPoke.size();
 
 void setcurrentFighter(int fighterCurrent){
     currentFighter = fighterCurrent;
@@ -2525,12 +2548,12 @@ void pokeBattle(int level, int hp, int attack, const char* name,  const char*  m
 
     if(isTrainer == 0){
         mvprintw(20, 42, "Fight[a]");
-        mvprintw(20, 52, "Bag[s]");
+        mvprintw(20, 52, "Bag[b]");
         mvprintw(20, 60, "Run[d]");
         mvprintw(20, 68, "Pokemon[z]");
     }else if(isTrainer == 1){
         mvprintw(20, 42, "Fight[a]");
-        mvprintw(20, 52, "Bag[s]");
+        mvprintw(20, 52, "Bag[b]");
         mvprintw(20, 60, "Pokemon[z]");
     }
 
@@ -2539,6 +2562,8 @@ void pokeBattle(int level, int hp, int attack, const char* name,  const char*  m
         setcurrentFighter(1);
 while(1){
         int randomNumber;
+        currentPokemon = 1;
+        originalhp = pcPoke[currentPokemon].hp;
         if(currentFighter == 1){
              randomNumber = std::rand() % 100; 
              char input;
@@ -2551,7 +2576,7 @@ while(1){
                         // refresh();
 
                         ch = getch();
-                        if (ch == 'a' || ch == 's' || ch == 'd' || ch == 'z') {
+                        if (ch == 'a' || ch == 'b' || ch == 'd' || ch == 'z') {
                             input = ch;
                             printw("%c", ch);
                             refresh();
@@ -2571,10 +2596,26 @@ while(1){
                         mvprintw(23, 0, "IT HAS A DAMAGE OF %d.", power);
                         mvprintw(24, 0, "THE ENEMY TOOK %d DAMAGE!", power);
                         hp = hp - power;
+                        if(hp < 0){
+                            hp = 0;
+                        }
                         mvprintw(5, 60, "HP=%d, Attack=%d", hp, attack);
                         setcurrentFighter(2);
                         break;
-                    } else if (input == 's') {
+                    } else if (input == 'b') {
+                        int rand = std::rand() % 9;
+                        if(rand <= 3){
+                        pcPoke[currentPokemon].revives -= 1;
+                        pcPoke[currentPokemon].hp += 10; 
+                         mvprintw(2, 0, "You used a revive, health has been increased");
+                        }else if(rand > 3 && rand <= 6){
+                        pcPoke[currentPokemon].hp += 20; 
+                        pcPoke[currentPokemon].potions -= 1;
+                         mvprintw(2, 0, "You used a potion, health has been increased");
+                        }else if(rand > 6){
+                        pcPoke[currentPokemon].pokeballs -= 1;
+                          mvprintw(2, 0, "You used a pokeball");
+                        }
                         setcurrentFighter(2);
                           break;
                     } else if (input == 'd') {
@@ -2584,7 +2625,6 @@ while(1){
                         mvprintw(23, 0, "                                                            ");
                         mvprintw(24, 0, "                                                           ");
                             mvprintw(2, 0, "RUN SUCCEEDED BYE");
-                            hp = 0;
                             break;
                         } else {
                         mvprintw(22, 0, "                                                            ");
@@ -2615,13 +2655,18 @@ while(1){
                         mvprintw(28, 0, "                                                           ");
                         mvprintw(26, 0, "%s USED THE MOVE: %s", name, move1);
                          int oppPower = opPower / 10;
-                         if(oppPower == 0){
+                         if(oppPower == 0 || oppPower > 10){
                             oppPower = 5;
                          }
                         mvprintw(27, 0, "IT HAS A DAMAGE OF %d.", oppPower);
                         mvprintw(28, 0, "YOU TOOK %d DAMAGE!", oppPower);
-                        pcPoke[0].hp = hp - oppPower;
-                        mvprintw(15, 3, "HP=%d, Attack=%d", pcPoke[0].hp, pcPoke[0].attack);
+                        pcPoke[currentPokemon].hp = hp - oppPower;
+                        if(pcPoke[currentPokemon].hp < 0){
+                            pcPoke[currentPokemon].hp = 0;
+                            currentPokemon +=1;
+                            deadPokemon += 1;
+                        }
+                        mvprintw(15, 3, "HP=%d, Attack=%d", pcPoke[currentPokemon].hp, pcPoke[currentPokemon].attack);
                         setcurrentFighter(1);
         }
         
@@ -2632,18 +2677,18 @@ while(1){
                         mvprintw(26, 0, "                                                            ");
                         mvprintw(27, 0, "                                                            ");
                         mvprintw(28, 0, "                                                           ");
+                        mvprintw(22, 20, "ENEMY HAS BEEN DEFEATED AND CAPTURED, PLEASE PRESS '5' TO CONTINUE ");
                         addCapturedPokemon( level,  hp,  attack,  name,  move1,  move2,  isShiny);
-                        mvprintw(11, 20, "ENEMY HAS BEEN DEFEATED AND CAPTURED, PLEASE PRESS '5' TO CONTINUE ");
             break;
-        }else if( pcPoke[0].hp < 1){
+        }else if(pcPoke[currentPokemon].hp <= 0){
                         mvprintw(22, 0, "                                                            ");
                         mvprintw(23, 0, "                                                            ");
                         mvprintw(24, 0, "                                                           ");
                         mvprintw(26, 0, "                                                            ");
                         mvprintw(27, 0, "                                                            ");
                         mvprintw(28, 0, "                                                           ");
-                        addCapturedPokemon( level,  hp,  attack,  name,  move1,  move2,  isShiny);
                         mvprintw(22, 0, "YOU HAVE BEEN DEFEATED, PLEASE PRESS '5' TO CONTINUE ");
+                        addCapturedPokemon( level, hp, attack, name, move1,  move2,  isShiny);
             break;
         }
               
@@ -3198,9 +3243,15 @@ int main(int argc, char* argv[]) {
           explorerPosFromPC(explorer.position.x, explorer.position.y,pc.position.x, pc.position.y);
 
        }else if(move == '>' && isPConCorM(&map[currentMapX][currentMapY]) == 1){
-         mvprintw(22, 0, "Welcome to the PokeCenter!");
+         mvprintw(22, 0, "Welcome to the PokeCenter, all your pokemon have been healed!");
+         //TODO
+         pcPoke[0].hp += 20;
        }else if (move == '>' && isPConCorM(&map[currentMapX][currentMapY]) == 2){
-        mvprintw(22, 0, "Welcome to the PokeMart!");
+        //TODO
+        pcPoke[0].revives = 5;
+        pcPoke[0].potions = 5;
+        pcPoke[0].pokeballs = 5;
+        mvprintw(22, 0, "Welcome to the PokeMart, all the items in your bag have been restored!");
        }else if(move == '<' || move == 27){
             updatePCLocation(&map[currentMapX][currentMapY], move);
             fflush(stdout);
