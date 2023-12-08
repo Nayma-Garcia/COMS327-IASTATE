@@ -1,0 +1,7 @@
+12/1
+    1:20pm: Started brainstorming on what game i wanted to make, i decided on battle ship. I started out with building the boards. I had a lot of trouble getting them set up since i was trying to do it similar to how i set up my map generation in the pokemon game.
+11/3
+    3:00PM: I finally got the boards set up, i used cells instead and that made it easier. I then worked on getting the computers AI set up. I struggled finding a good way to do this as well but I got something figured out. I also got the setting where the ships are set up.
+12/7
+	6:00pm: Started working on the player movement and all the logic around that. I also worked on implementing the turns, i struggled on this for abit since the computer kept trying to play and wouln't let me play. I then also added a winning and losing text.
+

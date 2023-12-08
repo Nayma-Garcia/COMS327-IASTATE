@@ -1,0 +1,21 @@
+Battleship Game
+
+Objective:
+Sink all the computer's ships before your own ships are sunk. 
+
+Game Elements:
+  Players board:
+    Displays the players board, this is where the computer will be taking shots at
+Computer Board:
+    Displays the computers board, this is where the player will be choosing a spot to target
+
+How to Play:
+    Use arrow keys to move to a spot that you would like to target (there is no indicator telling you where you are)
+    Press 'Enter' to fire at the selected position.
+    X represents a hit, O is a miss, and . indicates unexplored space.
+    The game alternates between player and computer turns.
+    The computer's moves are automated.
+
+Note:
+    Ships are initially placed on the board
+    The computer's moves are randomly generated using a simple AI i developed
